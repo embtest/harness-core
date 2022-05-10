@@ -9,6 +9,8 @@ package io.harness.ccm.connectors;
 
 import static io.harness.data.structure.EmptyPredicate.isEmpty;
 
+import static java.util.Collections.singletonList;
+
 import io.harness.annotations.dev.HarnessTeam;
 import io.harness.annotations.dev.OwnedBy;
 import io.harness.ccm.CENextGenConfiguration;
@@ -20,7 +22,16 @@ import io.harness.delegate.beans.connector.ConnectorType;
 import io.harness.delegate.beans.connector.gcpccm.GcpCloudCostConnectorDTO;
 import io.harness.ng.core.dto.ErrorDetail;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.gax.paging.Page;
+import com.google.api.services.cloudresourcemanager.CloudResourceManager;
+import com.google.api.services.cloudresourcemanager.model.TestIamPermissionsRequest;
+import com.google.api.services.cloudresourcemanager.model.TestIamPermissionsResponse;
+import com.google.api.services.iam.v1.IamScopes;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.ImpersonatedCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
@@ -37,6 +48,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,7 +94,37 @@ public class CEGcpConnectorValidator extends io.harness.ccm.connectors.AbstractC
           .status(ConnectivityStatus.FAILURE)
           .build();
     }
+    CloudResourceManager service = null;
     try {
+      service = createCloudResourceManagerService();
+    } catch (IOException | GeneralSecurityException e) {
+      log.error("Unable to initialize Cloud-Resource-Manager Service: ", e);
+      errorList.add(ErrorDetail.builder()
+                        .reason("Unable to initialize Cloud-Resource-Manager Service")
+                        .message("")
+                        .code(500)
+                        .build());
+      return ConnectorValidationResult.builder()
+          .errorSummary("Unable to initialize Cloud-Resource-Manager Service")
+          .errors(errorList)
+          .status(ConnectivityStatus.FAILURE)
+          .build();
+    }
+    try {
+      if (featuresEnabled.contains(CEFeatures.VISIBILITY)) {
+        ConnectorValidationResult visibilityPermissionsValidationResult =
+            validatePermissionsList(service, projectIdentifier, getRequiredPermissionsForVisibility());
+        if (visibilityPermissionsValidationResult.getStatus().equals(ConnectivityStatus.FAILURE)) {
+          return visibilityPermissionsValidationResult;
+        }
+      }
+      if (featuresEnabled.contains(CEFeatures.OPTIMIZATION)) {
+        ConnectorValidationResult optimizationPermissionsValidationResult =
+            validatePermissionsList(service, projectIdentifier, getRequiredPermissionsForOptimization());
+        if (optimizationPermissionsValidationResult.getStatus().equals(ConnectivityStatus.FAILURE)) {
+          return optimizationPermissionsValidationResult;
+        }
+      }
       ConnectorValidationResult connectorValidationResult =
           validateAccessToBillingReport(projectId, datasetId, gcpTableName, impersonatedServiceAccount);
       if (connectorValidationResult != null) {
@@ -123,6 +165,93 @@ public class CEGcpConnectorValidator extends io.harness.ccm.connectors.AbstractC
         .status(ConnectivityStatus.SUCCESS)
         .testedAt(Instant.now().toEpochMilli())
         .build();
+  }
+
+  private CloudResourceManager createCloudResourceManagerService() throws GeneralSecurityException, IOException {
+    ServiceAccountCredentials serviceAccountCredentials = getGcpCredentials(GCP_CREDENTIALS_PATH);
+    if (serviceAccountCredentials == null) {
+      return null;
+    }
+    GoogleCredential googleCredential = toGoogleCredential(serviceAccountCredentials);
+
+    return new CloudResourceManager
+        .Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), googleCredential)
+        .setApplicationName("service-accounts")
+        .build();
+  }
+
+  public ConnectorValidationResult validatePermissionsList(
+      CloudResourceManager service, String projectIdentifier, List<String> permissionsList) {
+    final List<ErrorDetail> errorList = new ArrayList<>();
+    TestIamPermissionsRequest requestBody = new TestIamPermissionsRequest().setPermissions(permissionsList);
+    try {
+      TestIamPermissionsResponse testIamPermissionsResponse =
+          service.projects().testIamPermissions(projectIdentifier, requestBody).execute();
+
+      if (testIamPermissionsResponse.getPermissions().containsAll(permissionsList)) {
+        log.info("Required Permissions validated successfully.");
+        return ConnectorValidationResult.builder()
+            .status(ConnectivityStatus.SUCCESS)
+            .testedAt(Instant.now().toEpochMilli())
+            .build();
+      }
+
+      List<String> missingPermissions = new ArrayList<>(permissionsList);
+      missingPermissions.removeAll(testIamPermissionsResponse.getPermissions());
+      log.error("Some permissions were found to be missing. {}", missingPermissions);
+      errorList.add(ErrorDetail.builder().reason("Some permissions were found to be missing").message("").build());
+      return ConnectorValidationResult.builder()
+          .errorSummary("Some permissions were found to be missing")
+          .errors(errorList)
+          .status(ConnectivityStatus.FAILURE)
+          .testedAt(Instant.now().toEpochMilli())
+          .build();
+    } catch (IOException e) {
+      log.error("Unable to test permissions", e);
+      errorList.add(ErrorDetail.builder().reason("Unable to test permissions").message("").build());
+      return ConnectorValidationResult.builder()
+          .errorSummary("Unable to test permissions")
+          .errors(errorList)
+          .status(ConnectivityStatus.FAILURE)
+          .build();
+    }
+  }
+
+  public List<String> getRequiredPermissionsForVisibility() {
+    return Arrays.asList(
+        "compute.instances.list", "compute.disks.list", "compute.snapshots.list", "compute.regions.list");
+  }
+
+  public List<String> getRequiredPermissionsForOptimization() {
+    return Arrays.asList("compute.addresses.create", "compute.addresses.createInternal", "compute.addresses.delete",
+        "compute.addresses.deleteInternal", "compute.addresses.get", "compute.addresses.list",
+        "compute.addresses.setLabels", "compute.addresses.use", "compute.addresses.useInternal",
+        "compute.autoscalers.create", "compute.autoscalers.delete", "compute.autoscalers.get",
+        "compute.autoscalers.list", "compute.autoscalers.update", "compute.instanceGroupManagers.create",
+        "compute.instanceGroupManagers.delete", "compute.instanceGroupManagers.get",
+        "compute.instanceGroupManagers.list", "compute.instanceGroupManagers.update",
+        "compute.instanceGroupManagers.use", "compute.instanceGroups.create", "compute.instanceGroups.delete",
+        "compute.instanceGroups.get", "compute.instanceGroups.list", "compute.instanceGroups.update",
+        "compute.instanceGroups.use", "compute.instances.addAccessConfig", "compute.instances.attachDisk",
+        "compute.instances.create", "compute.instances.createTagBinding", "compute.instances.delete",
+        "compute.instances.deleteAccessConfig", "compute.instances.deleteTagBinding", "compute.instances.detachDisk",
+        "compute.instances.get", "compute.instances.getEffectiveFirewalls", "compute.instances.getIamPolicy",
+        "compute.instances.getSerialPortOutput", "compute.instances.list", "compute.instances.listEffectiveTags",
+        "compute.instances.listTagBindings", "compute.instances.osAdminLogin", "compute.instances.osLogin",
+        "compute.instances.removeResourcePolicies", "compute.instances.reset", "compute.instances.resume",
+        "compute.instances.sendDiagnosticInterrupt", "compute.instances.setDeletionProtection",
+        "compute.instances.setDiskAutoDelete", "compute.instances.setIamPolicy", "compute.instances.setLabels",
+        "compute.instances.setMachineResources", "compute.instances.setMachineType", "compute.instances.setMetadata",
+        "compute.instances.setMinCpuPlatform", "compute.instances.setScheduling", "compute.instances.setServiceAccount",
+        "compute.instances.setShieldedInstanceIntegrityPolicy", "compute.instances.setShieldedVmIntegrityPolicy",
+        "compute.instances.setTags", "compute.instances.start", "compute.instances.stop", "compute.instances.suspend",
+        "compute.instances.update", "compute.instances.updateAccessConfig", "compute.instances.updateDisplayDevice",
+        "compute.instances.updateNetworkInterface", "compute.instances.updateSecurity",
+        "compute.instances.updateShieldedInstanceConfig", "compute.instances.updateShieldedVmConfig",
+        "compute.instances.use", "compute.instances.useReadOnly", "compute.machineTypes.list",
+        "compute.networks.access", "compute.networks.get", "compute.networks.getEffectiveFirewalls",
+        "compute.networks.getRegionEffectiveFirewalls", "compute.networks.list", "compute.networks.mirror",
+        "compute.regions.get", "compute.regions.list", "secretmanager.versions.access");
   }
 
   public ConnectorValidationResult validateAccessToBillingReport(
@@ -263,5 +392,20 @@ public class CEGcpConnectorValidator extends io.harness.ccm.connectors.AbstractC
       return ImpersonatedCredentials.create(sourceCredentials, impersonatedServiceAccount, null,
           Arrays.asList("https://www.googleapis.com/auth/cloud-platform"), 300);
     }
+  }
+
+  public static GoogleCredential toGoogleCredential(ServiceAccountCredentials serviceAccountCredentials)
+      throws GeneralSecurityException, IOException {
+    HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+    JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+    return new GoogleCredential.Builder()
+        .setServiceAccountProjectId(serviceAccountCredentials.getProjectId())
+        .setServiceAccountId(serviceAccountCredentials.getClientEmail())
+        .setServiceAccountPrivateKeyId(serviceAccountCredentials.getPrivateKeyId())
+        .setServiceAccountPrivateKey(serviceAccountCredentials.getPrivateKey())
+        .setTransport(httpTransport)
+        .setJsonFactory(jsonFactory)
+        .setServiceAccountScopes(singletonList(IamScopes.CLOUD_PLATFORM))
+        .build();
   }
 }
