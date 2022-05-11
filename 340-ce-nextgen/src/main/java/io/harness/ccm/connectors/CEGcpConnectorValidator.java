@@ -113,14 +113,14 @@ public class CEGcpConnectorValidator extends io.harness.ccm.connectors.AbstractC
     try {
       if (featuresEnabled.contains(CEFeatures.VISIBILITY)) {
         ConnectorValidationResult visibilityPermissionsValidationResult =
-            validatePermissionsList(service, projectIdentifier, getRequiredPermissionsForVisibility());
+            validatePermissionsList(service, projectId, getRequiredPermissionsForVisibility());
         if (visibilityPermissionsValidationResult.getStatus().equals(ConnectivityStatus.FAILURE)) {
           return visibilityPermissionsValidationResult;
         }
       }
       if (featuresEnabled.contains(CEFeatures.OPTIMIZATION)) {
         ConnectorValidationResult optimizationPermissionsValidationResult =
-            validatePermissionsList(service, projectIdentifier, getRequiredPermissionsForOptimization());
+            validatePermissionsList(service, projectId, getRequiredPermissionsForOptimization());
         if (optimizationPermissionsValidationResult.getStatus().equals(ConnectivityStatus.FAILURE)) {
           return optimizationPermissionsValidationResult;
         }
@@ -181,12 +181,12 @@ public class CEGcpConnectorValidator extends io.harness.ccm.connectors.AbstractC
   }
 
   public ConnectorValidationResult validatePermissionsList(
-      CloudResourceManager service, String projectIdentifier, List<String> permissionsList) {
+      CloudResourceManager service, String projectId, List<String> permissionsList) {
     final List<ErrorDetail> errorList = new ArrayList<>();
     TestIamPermissionsRequest requestBody = new TestIamPermissionsRequest().setPermissions(permissionsList);
     try {
       TestIamPermissionsResponse testIamPermissionsResponse =
-          service.projects().testIamPermissions(projectIdentifier, requestBody).execute();
+          service.projects().testIamPermissions(projectId, requestBody).execute();
 
       if (testIamPermissionsResponse.getPermissions().containsAll(permissionsList)) {
         log.info("Required Permissions validated successfully.");
