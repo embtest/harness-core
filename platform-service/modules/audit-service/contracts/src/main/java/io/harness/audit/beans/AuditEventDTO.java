@@ -21,11 +21,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -38,6 +37,7 @@ import org.hibernate.validator.constraints.NotBlank;
 @JsonInclude(NON_NULL)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
+@Schema(name = "AuditEvent", description = "This has the AuditEvent details defined in Harness.")
 public class AuditEventDTO {
   @Schema(description = "Identifier of the Audit.") String auditId;
   @Schema(description = "Insert Identifier of the Audit.") @NotNull @NotBlank String insertId;

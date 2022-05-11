@@ -10,6 +10,7 @@ package io.harness.notification.remote.dto;
 import io.harness.Team;
 import io.harness.notification.NotificationChannelType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,11 +20,14 @@ import lombok.experimental.FieldDefaults;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Schema(name = "Notification", description = "This has the Notification details defined in Harness.")
 public class NotificationDTO {
-  String id;
-  String accountIdentifier;
-  Team team;
+  @Schema(description = "Identifier of the notification.") String id;
+  @Schema(description = "Account Identifier.") String accountIdentifier;
+  @Schema(description = "Team associated with the notification.") Team team;
+  @Schema(description = "Channel type of notification. We currently support SLACK, EMAIL, PAGERDUTY and MSTEAMS.")
   NotificationChannelType channelType;
+  @Schema(description = "Boolean responses of whether or not the notification is sent.")
   List<Boolean> processingResponses;
-  int retries;
+  @Schema(description = "Number of retries done to send the notification.") int retries;
 }

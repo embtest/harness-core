@@ -18,13 +18,12 @@ import io.harness.exception.InvalidArgumentsException;
 import io.harness.security.dto.UserPrincipal;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
@@ -34,6 +33,7 @@ import lombok.experimental.FieldNameConstants;
 @Builder
 @JsonInclude(NON_NULL)
 @FieldNameConstants(innerTypeName = "AuthenticationInfoKeys")
+@Schema(name = "AuthenticationInfo", description = "This has the AuthenticationInfo details defined in Harness.")
 public class AuthenticationInfoDTO {
   @NotNull @Valid Principal principal;
   @Schema(description = "labels") @Size(max = 5) Map<String, String> labels;

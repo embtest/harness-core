@@ -19,6 +19,7 @@ import static io.harness.annotations.dev.HarnessTeam.PL;
 @OwnedBy(PL)
 @Data
 @Builder
+@Schema(name = "AuditSettings", description = "This has the AuditSettings details defined in Harness.")
 public class AuditSettingsDTO {
   @Schema(description = "Retention time of the Audits in terms of months") @NotNull int retentionPeriodInMonths;
 }
