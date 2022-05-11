@@ -6,15 +6,14 @@
  */
 
 package io.harness.audit.beans;
+import static io.harness.annotations.dev.HarnessTeam.PL;
 
 import io.harness.annotations.dev.OwnedBy;
+
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
-
-import javax.validation.constraints.NotNull;
-
-import static io.harness.annotations.dev.HarnessTeam.PL;
 
 @OwnedBy(PL)
 @Data

@@ -44,11 +44,13 @@ public interface AuditYamlResource {
   @GET
   @ApiOperation(value = "Get Yaml Diff for an audit", nickname = "getYamlDiff")
   @Operation(operationId = "getYamlDiff", summary = "Gets the YamlDiff of the Audit.",
-          responses =
-                  {
-                          @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "default",
-                                  description = "Returns the old Yaml and new Yaml.")
-                  })
-  ResponseDTO<YamlDiffRecordDTO> get(@Parameter(description = ACCOUNT_PARAM_MESSAGE, required = true) @NotNull @QueryParam(NGCommonEntityConstants.ACCOUNT_KEY) String accountIdentifier,
+      responses =
+      {
+        @io.swagger.v3.oas.annotations.responses.
+        ApiResponse(responseCode = "default", description = "Returns the old Yaml and new Yaml.")
+      })
+  ResponseDTO<YamlDiffRecordDTO>
+  get(@Parameter(description = ACCOUNT_PARAM_MESSAGE, required = true) @NotNull @QueryParam(
+          NGCommonEntityConstants.ACCOUNT_KEY) String accountIdentifier,
       @NotNull @QueryParam("auditId") String auditId);
 }
