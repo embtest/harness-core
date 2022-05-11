@@ -7,17 +7,18 @@
 
 package io.harness.audit.beans;
 
-import static io.harness.annotations.dev.HarnessTeam.PL;
-
 import io.harness.annotations.dev.OwnedBy;
-
-import javax.validation.constraints.NotNull;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
+
+import javax.validation.constraints.NotNull;
+
+import static io.harness.annotations.dev.HarnessTeam.PL;
 
 @OwnedBy(PL)
 @Data
 @Builder
 public class AuditSettingsDTO {
-  @NotNull int retentionPeriodInMonths;
+  @Schema(description = "Retention time of the Audits in terms of months") @NotNull int retentionPeriodInMonths;
 }

@@ -23,6 +23,8 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
@@ -34,7 +36,7 @@ import lombok.experimental.FieldNameConstants;
 @FieldNameConstants(innerTypeName = "AuthenticationInfoKeys")
 public class AuthenticationInfoDTO {
   @NotNull @Valid Principal principal;
-  @Size(max = 5) Map<String, String> labels;
+  @Schema(description = "labels") @Size(max = 5) Map<String, String> labels;
 
   public static AuthenticationInfoDTO fromSecurityPrincipal(io.harness.security.dto.Principal principal) {
     if (principal == null) {
