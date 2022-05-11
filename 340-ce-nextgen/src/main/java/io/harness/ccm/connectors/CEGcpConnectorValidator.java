@@ -188,7 +188,8 @@ public class CEGcpConnectorValidator extends io.harness.ccm.connectors.AbstractC
       TestIamPermissionsResponse testIamPermissionsResponse =
           service.projects().testIamPermissions(projectId, requestBody).execute();
 
-      if (testIamPermissionsResponse.getPermissions().containsAll(permissionsList)) {
+      if (!testIamPermissionsResponse.isEmpty()
+          && testIamPermissionsResponse.getPermissions().containsAll(permissionsList)) {
         log.info("Required Permissions validated successfully.");
         return ConnectorValidationResult.builder()
             .status(ConnectivityStatus.SUCCESS)
