@@ -1,3 +1,11 @@
+## Describe your changes
+
+## Checklist
+- [ ] I've documented the changes in the PR description.
+- [ ] I've tested this change either in PR or local environment.
+- [ ] If hashcheck failed I followed the [the checklist](https://harness.atlassian.net/wiki/spaces/DEL/pages/21016838831/PR+Codebasehash+Check+merge+checklist) and updated this PR description with my answers to make sure I'm not introducing any breaking changes.
+
+## Triggers
 You can use the following comments to re-trigger PR Checks
 
 - Compile: `trigger compile`
