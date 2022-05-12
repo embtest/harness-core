@@ -202,11 +202,11 @@ public class CEGcpConnectorValidator extends io.harness.ccm.connectors.AbstractC
       errorList.add(ErrorDetail.builder()
                         .reason("Some required permissions were found to be missing")
                         .message("Please check if service account " + impersonatedServiceAccount
-                            + " has all the required permissions.")
+                            + " has all the required permissions. " + missingPermissions)
                         .build());
       return ConnectorValidationResult.builder()
           .errorSummary(
-              "Some required permissions were found to be missing for service account" + impersonatedServiceAccount)
+              "Some required permissions were found to be missing for service account " + impersonatedServiceAccount)
           .errors(errorList)
           .status(ConnectivityStatus.FAILURE)
           .testedAt(Instant.now().toEpochMilli())
@@ -226,95 +226,40 @@ public class CEGcpConnectorValidator extends io.harness.ccm.connectors.AbstractC
   }
 
   public List<String> getRequiredPermissionsForVisibility() {
-    return Arrays.asList("compute.disks.list",
-            "compute.instances.list",
-            "compute.regions.list",
-            "compute.snapshots.list");
+    return Arrays.asList(
+        "compute.disks.list", "compute.instances.list", "compute.regions.list", "compute.snapshots.list");
   }
 
   public List<String> getRequiredPermissionsForOptimization() {
-    return Arrays.asList("compute.addresses.create",
-            "compute.addresses.createInternal",
-            "compute.addresses.delete",
-            "compute.addresses.deleteInternal",
-            "compute.addresses.get",
-            "compute.addresses.list",
-            "compute.addresses.setLabels",
-            "compute.addresses.use",
-            "compute.addresses.useInternal",
-            "compute.autoscalers.create",
-            "compute.autoscalers.delete",
-            "compute.autoscalers.get",
-            "compute.autoscalers.list",
-            "compute.autoscalers.update",
-            "compute.instanceGroupManagers.create",
-            "compute.instanceGroupManagers.delete",
-            "compute.instanceGroupManagers.get",
-            "compute.instanceGroupManagers.list",
-            "compute.instanceGroupManagers.update",
-            "compute.instanceGroupManagers.use",
-            "compute.instanceGroups.create",
-            "compute.instanceGroups.delete",
-            "compute.instanceGroups.get",
-            "compute.instanceGroups.list",
-            "compute.instanceGroups.update",
-            "compute.instanceGroups.use",
-            "compute.instances.addAccessConfig",
-            "compute.instances.attachDisk",
-            "compute.instances.create",
-            "compute.instances.createTagBinding",
-            "compute.instances.delete",
-            "compute.instances.deleteAccessConfig",
-            "compute.instances.deleteTagBinding",
-            "compute.instances.detachDisk",
-            "compute.instances.get",
-            "compute.instances.getEffectiveFirewalls",
-            "compute.instances.getIamPolicy",
-            "compute.instances.getSerialPortOutput",
-            "compute.instances.list",
-            "compute.instances.listEffectiveTags",
-            "compute.instances.listTagBindings",
-            "compute.instances.osAdminLogin",
-            "compute.instances.osLogin",
-            "compute.instances.removeResourcePolicies",
-            "compute.instances.reset",
-            "compute.instances.resume",
-            "compute.instances.sendDiagnosticInterrupt",
-            "compute.instances.setDeletionProtection",
-            "compute.instances.setDiskAutoDelete",
-            "compute.instances.setIamPolicy",
-            "compute.instances.setLabels",
-            "compute.instances.setMachineResources",
-            "compute.instances.setMachineType",
-            "compute.instances.setMetadata",
-            "compute.instances.setMinCpuPlatform",
-            "compute.instances.setScheduling",
-            "compute.instances.setServiceAccount",
-            "compute.instances.setShieldedInstanceIntegrityPolicy",
-            "compute.instances.setShieldedVmIntegrityPolicy",
-            "compute.instances.setTags",
-            "compute.instances.start",
-            "compute.instances.stop",
-            "compute.instances.suspend",
-            "compute.instances.update",
-            "compute.instances.updateAccessConfig",
-            "compute.instances.updateDisplayDevice",
-            "compute.instances.updateNetworkInterface",
-            "compute.instances.updateSecurity",
-            "compute.instances.updateShieldedInstanceConfig",
-            "compute.instances.updateShieldedVmConfig",
-            "compute.instances.use",
-            "compute.instances.useReadOnly",
-            "compute.machineTypes.list",
-            "compute.networks.access",
-            "compute.networks.get",
-            "compute.networks.getEffectiveFirewalls",
-            "compute.networks.getRegionEffectiveFirewalls",
-            "compute.networks.list",
-            "compute.networks.mirror",
-            "compute.regions.get",
-            "compute.regions.list",
-            "secretmanager.versions.access");
+    return Arrays.asList("compute.addresses.create", "compute.addresses.createInternal", "compute.addresses.delete",
+        "compute.addresses.deleteInternal", "compute.addresses.get", "compute.addresses.list",
+        "compute.addresses.setLabels", "compute.addresses.use", "compute.addresses.useInternal",
+        "compute.autoscalers.create", "compute.autoscalers.delete", "compute.autoscalers.get",
+        "compute.autoscalers.list", "compute.autoscalers.update", "compute.instanceGroupManagers.create",
+        "compute.instanceGroupManagers.delete", "compute.instanceGroupManagers.get",
+        "compute.instanceGroupManagers.list", "compute.instanceGroupManagers.update",
+        "compute.instanceGroupManagers.use", "compute.instanceGroups.create", "compute.instanceGroups.delete",
+        "compute.instanceGroups.get", "compute.instanceGroups.list", "compute.instanceGroups.update",
+        "compute.instanceGroups.use", "compute.instances.addAccessConfig", "compute.instances.attachDisk",
+        "compute.instances.create", "compute.instances.createTagBinding", "compute.instances.delete",
+        "compute.instances.deleteAccessConfig", "compute.instances.deleteTagBinding", "compute.instances.detachDisk",
+        "compute.instances.get", "compute.instances.getEffectiveFirewalls", "compute.instances.getIamPolicy",
+        "compute.instances.getSerialPortOutput", "compute.instances.list", "compute.instances.listEffectiveTags",
+        "compute.instances.listTagBindings", "compute.instances.osAdminLogin", "compute.instances.osLogin",
+        "compute.instances.removeResourcePolicies", "compute.instances.reset", "compute.instances.resume",
+        "compute.instances.sendDiagnosticInterrupt", "compute.instances.setDeletionProtection",
+        "compute.instances.setDiskAutoDelete", "compute.instances.setIamPolicy", "compute.instances.setLabels",
+        "compute.instances.setMachineResources", "compute.instances.setMachineType", "compute.instances.setMetadata",
+        "compute.instances.setMinCpuPlatform", "compute.instances.setScheduling", "compute.instances.setServiceAccount",
+        "compute.instances.setShieldedInstanceIntegrityPolicy", "compute.instances.setShieldedVmIntegrityPolicy",
+        "compute.instances.setTags", "compute.instances.start", "compute.instances.stop", "compute.instances.suspend",
+        "compute.instances.update", "compute.instances.updateAccessConfig", "compute.instances.updateDisplayDevice",
+        "compute.instances.updateNetworkInterface", "compute.instances.updateSecurity",
+        "compute.instances.updateShieldedInstanceConfig", "compute.instances.updateShieldedVmConfig",
+        "compute.instances.use", "compute.instances.useReadOnly", "compute.machineTypes.list",
+        "compute.networks.access", "compute.networks.get", "compute.networks.getEffectiveFirewalls",
+        "compute.networks.getRegionEffectiveFirewalls", "compute.networks.list", "compute.networks.mirror",
+        "compute.regions.get", "compute.regions.list", "secretmanager.versions.access");
   }
 
   public ConnectorValidationResult validateAccessToBillingReport(
