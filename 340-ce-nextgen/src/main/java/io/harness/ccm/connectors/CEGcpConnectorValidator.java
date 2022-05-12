@@ -9,8 +9,6 @@ package io.harness.ccm.connectors;
 
 import static io.harness.data.structure.EmptyPredicate.isEmpty;
 
-import static java.util.Collections.singletonList;
-
 import io.harness.annotations.dev.HarnessTeam;
 import io.harness.annotations.dev.OwnedBy;
 import io.harness.ccm.CENextGenConfiguration;
@@ -22,17 +20,14 @@ import io.harness.delegate.beans.connector.ConnectorType;
 import io.harness.delegate.beans.connector.gcpccm.GcpCloudCostConnectorDTO;
 import io.harness.ng.core.dto.ErrorDetail;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.gax.paging.Page;
 import com.google.api.services.cloudresourcemanager.CloudResourceManager;
 import com.google.api.services.cloudresourcemanager.model.TestIamPermissionsRequest;
 import com.google.api.services.cloudresourcemanager.model.TestIamPermissionsResponse;
-import com.google.api.services.iam.v1.IamScopes;
 import com.google.auth.Credentials;
+import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.ImpersonatedCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.bigquery.BigQuery;
@@ -96,7 +91,7 @@ public class CEGcpConnectorValidator extends io.harness.ccm.connectors.AbstractC
     }
     CloudResourceManager service = null;
     try {
-      service = createCloudResourceManagerService();
+      service = createCloudResourceManagerService(impersonatedServiceAccount);
     } catch (IOException | GeneralSecurityException e) {
       log.error("Unable to initialize Cloud-Resource-Manager Service: ", e);
       errorList.add(ErrorDetail.builder()
@@ -167,15 +162,17 @@ public class CEGcpConnectorValidator extends io.harness.ccm.connectors.AbstractC
         .build();
   }
 
-  private CloudResourceManager createCloudResourceManagerService() throws GeneralSecurityException, IOException {
+  private CloudResourceManager createCloudResourceManagerService(String impersonatedServiceAccount)
+      throws GeneralSecurityException, IOException {
     ServiceAccountCredentials serviceAccountCredentials = getGcpCredentials(GCP_CREDENTIALS_PATH);
     if (serviceAccountCredentials == null) {
       return null;
     }
-    GoogleCredential googleCredential = toGoogleCredential(serviceAccountCredentials);
+    Credentials credentials = getGcpImpersonatedCredentials(serviceAccountCredentials, impersonatedServiceAccount);
 
     return new CloudResourceManager
-        .Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), googleCredential)
+        .Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(),
+            new HttpCredentialsAdapter(credentials))
         .setApplicationName("service-accounts")
         .build();
   }
@@ -458,20 +455,5 @@ public class CEGcpConnectorValidator extends io.harness.ccm.connectors.AbstractC
       return ImpersonatedCredentials.create(sourceCredentials, impersonatedServiceAccount, null,
           Arrays.asList("https://www.googleapis.com/auth/cloud-platform"), 300);
     }
-  }
-
-  public static GoogleCredential toGoogleCredential(ServiceAccountCredentials serviceAccountCredentials)
-      throws GeneralSecurityException, IOException {
-    HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-    JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-    return new GoogleCredential.Builder()
-        .setServiceAccountProjectId(serviceAccountCredentials.getProjectId())
-        .setServiceAccountId(serviceAccountCredentials.getClientEmail())
-        .setServiceAccountPrivateKeyId(serviceAccountCredentials.getPrivateKeyId())
-        .setServiceAccountPrivateKey(serviceAccountCredentials.getPrivateKey())
-        .setTransport(httpTransport)
-        .setJsonFactory(jsonFactory)
-        .setServiceAccountScopes(singletonList(IamScopes.CLOUD_PLATFORM))
-        .build();
   }
 }
