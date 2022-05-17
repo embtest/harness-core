@@ -256,7 +256,8 @@ public class InfrastructureStep implements SyncExecutableWithRbac<Infrastructure
         break;
       case InfrastructureKind.SSH_WINRM_AWS:
         SshWinRmAwsInfrastructure sshWinRmAwsInfrastructure = (SshWinRmAwsInfrastructure) infrastructure;
-        validateExpression(sshWinRmAwsInfrastructure.getConnectorRef());
+        validateExpression(sshWinRmAwsInfrastructure.getConnectorRef(), sshWinRmAwsInfrastructure.getCredentialsRef(),
+            sshWinRmAwsInfrastructure.getRegion());
         break;
       default:
         throw new InvalidArgumentsException(format("Unknown Infrastructure Kind : [%s]", infrastructure.getKind()));
