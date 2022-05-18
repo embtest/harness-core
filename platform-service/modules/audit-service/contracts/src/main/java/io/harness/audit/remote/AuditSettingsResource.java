@@ -6,6 +6,7 @@
  */
 
 package io.harness.audit.remote;
+
 import static io.harness.NGCommonEntityConstants.ACCOUNT_PARAM_MESSAGE;
 import static io.harness.annotations.dev.HarnessTeam.PL;
 
@@ -46,13 +47,15 @@ public interface AuditSettingsResource {
   @Hidden
   @ApiOperation(value = "Update Audit Settings for an account", nickname = "putAuditSettings")
   @Operation(operationId = "putAuditSettings", summary = "Update Audit settings.",
-          responses =
-                  {
-                          @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "default",
-                                  description = "Returns the updated Audit settings.")
-                  },
-                    hidden = true)
+      responses =
+      {
+        @io.swagger.v3.oas.annotations.responses.
+        ApiResponse(responseCode = "default", description = "Returns the updated Audit settings.")
+      },
+      hidden = true)
   @InternalApi
-  ResponseDTO<AuditSettingsDTO> update(@Parameter(description = ACCOUNT_PARAM_MESSAGE, required = true) @NotNull @QueryParam(NGCommonEntityConstants.ACCOUNT_KEY)
-                                       String accountIdentifier, @NotNull AuditSettingsDTO auditSettingsDTO);
+  ResponseDTO<AuditSettingsDTO>
+  update(@Parameter(description = ACCOUNT_PARAM_MESSAGE, required = true) @NotNull @QueryParam(
+             NGCommonEntityConstants.ACCOUNT_KEY) String accountIdentifier,
+      @NotNull AuditSettingsDTO auditSettingsDTO);
 }
