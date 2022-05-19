@@ -7,8 +7,8 @@
 
 package io.harness.notification.remote.dto;
 
-import io.harness.Team;
 import io.harness.notification.NotificationChannelType;
+import io.harness.notification.Team;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
