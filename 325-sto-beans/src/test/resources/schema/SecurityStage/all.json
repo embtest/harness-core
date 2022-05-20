@@ -3858,6 +3858,9 @@
             "args": {
               "type": "string"
             },
+            "buildEnvironment": {
+              "type": "string"
+            },
             "buildTool": {
               "oneOf": [
                 {
@@ -3892,6 +3895,9 @@
                   "type": "string"
                 }
               ]
+            },
+            "frameworkVersion": {
+              "type": "string"
             },
             "image": {
               "type": "string"

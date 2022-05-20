@@ -7,8 +7,13 @@
 
 package io.harness.delegate.beans.ci.vm.runner;
 
+import static io.harness.beans.SwaggerConstants.STRING_CLASSPATH;
+
+import io.harness.pms.yaml.ParameterField;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
@@ -104,5 +109,7 @@ public class ExecuteStepRequest {
     @JsonProperty("packages") String packages;
     @JsonProperty("run_only_selected_tests") boolean runOnlySelectedTests;
     @JsonProperty("test_annotations") String testAnnotations;
+    @JsonProperty("build_environment") String buildEnvironment;
+    @JsonProperty("framework_version") String frameworkVersion;
   }
 }

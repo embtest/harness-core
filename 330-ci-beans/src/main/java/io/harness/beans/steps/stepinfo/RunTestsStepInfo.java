@@ -88,6 +88,8 @@ public class RunTestsStepInfo implements CIStepInfo {
   private ParameterField<TIBuildTool> buildTool;
   @ApiModelProperty(dataType = STRING_CLASSPATH) private ParameterField<String> packages;
   @ApiModelProperty(dataType = STRING_CLASSPATH) private ParameterField<String> testAnnotations;
+  @ApiModelProperty(dataType = STRING_CLASSPATH) private ParameterField<String> buildEnvironment;
+  @ApiModelProperty(dataType = STRING_CLASSPATH) private ParameterField<String> frameworkVersion;
   @YamlSchemaTypes({runtime})
   @ApiModelProperty(dataType = "io.harness.beans.yaml.extended.reports.UnitTestReport")
   private ParameterField<UnitTestReport> reports;
@@ -121,16 +123,17 @@ public class RunTestsStepInfo implements CIStepInfo {
   @Builder
   @ConstructorProperties({"identifier", "name", "retry", "args", "language", "buildTool", "image", "connectorRef",
       "resources", "reports", "testAnnotations", "packages", "runOnlySelectedTests", "preCommand", "postCommand",
-      "outputVariables", "envVariables", "privileged", "runAsUser", "imagePullPolicy", "shell"})
+      "outputVariables", "envVariables", "buildEnvironment", "frameworkVersion", "privileged", "runAsUser",
+      "imagePullPolicy", "shell"})
   public RunTestsStepInfo(String identifier, String name, Integer retry, ParameterField<String> args,
       ParameterField<TILanguage> language, ParameterField<TIBuildTool> buildTool, ParameterField<String> image,
       ParameterField<String> connectorRef, ContainerResource resources, ParameterField<UnitTestReport> reports,
       ParameterField<String> testAnnotations, ParameterField<String> packages,
       ParameterField<Boolean> runOnlySelectedTests, ParameterField<String> preCommand,
       ParameterField<String> postCommand, ParameterField<List<OutputNGVariable>> outputVariables,
-      ParameterField<Map<String, String>> envVariables, ParameterField<Boolean> privileged,
-      ParameterField<Integer> runAsUser, ParameterField<ImagePullPolicy> imagePullPolicy,
-      ParameterField<CIShellType> shell) {
+      ParameterField<Map<String, String>> envVariables, ParameterField<String> buildEnvironment,
+      ParameterField<String> frameworkVersion, ParameterField<Boolean> privileged, ParameterField<Integer> runAsUser,
+      ParameterField<ImagePullPolicy> imagePullPolicy, ParameterField<CIShellType> shell) {
     this.identifier = identifier;
     this.name = name;
     this.retry = Optional.ofNullable(retry).orElse(DEFAULT_RETRY);
@@ -152,6 +155,8 @@ public class RunTestsStepInfo implements CIStepInfo {
     this.runAsUser = runAsUser;
     this.imagePullPolicy = imagePullPolicy;
     this.shell = shell;
+    this.buildEnvironment = buildEnvironment;
+    this.frameworkVersion = frameworkVersion;
   }
 
   @Override

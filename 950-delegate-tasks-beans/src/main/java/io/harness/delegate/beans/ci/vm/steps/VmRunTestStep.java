@@ -39,6 +39,8 @@ public class VmRunTestStep implements VmStepInfo {
   private List<String> outputVariables;
   private VmUnitTestReport unitTestReport;
   private long timeoutSecs;
+  private String buildEnvironment;
+  private String frameworkVersion;
 
   @Override
   public VmStepInfo.Type getType() {

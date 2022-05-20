@@ -36,6 +36,7 @@ import io.harness.delegate.task.citasks.cik8handler.SecretSpecBuilder;
 import io.harness.delegate.task.citasks.vm.helper.CIVMConstants;
 import io.harness.delegate.task.citasks.vm.helper.StepExecutionHelper;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -175,6 +176,8 @@ public class CIVMExecuteStepTaskHandler implements CIExecuteStepTaskHandler {
                            .packages(runTestStep.getPackages())
                            .runOnlySelectedTests(runTestStep.isRunOnlySelectedTests())
                            .testAnnotations(runTestStep.getTestAnnotations())
+                           .buildEnvironment(runTestStep.getBuildEnvironment())
+                           .frameworkVersion(runTestStep.getFrameworkVersion())
                            .build())
         .image(runTestStep.getImage())
         .pull(runTestStep.getPullPolicy())

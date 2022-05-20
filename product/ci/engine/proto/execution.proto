@@ -55,6 +55,8 @@ message RunTestsStep {
   // TODO (Vistaar): Proxy this call from addon to LE.
   string diff_files = 13;
   map<string, string> environment = 14;
+  string buildEnvironment = 15;
+  string frameworkVersion = 16;
 }
 
 message RunStep {
