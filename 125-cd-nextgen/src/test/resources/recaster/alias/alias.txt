@@ -349,6 +349,7 @@ io.harness.steps.customstage.CustomStageNode
 io.harness.cdng.environment.yaml.EnvironmentPlanCreatorConfig
 io.harness.cdng.gitops.yaml.ClusterYaml
 io.harness.cdng.provision.cloudformation.CloudformationCreateStackStepConfigurationParameters
+io.harness.cdng.environment.steps.EnvironmentStepParameters
 io.harness.cdng.configfile.ConfigFileWrapper
 io.harness.cdng.configfile.ConfigFile
 io.harness.cdng.configfile.ConfigFileOutcome
