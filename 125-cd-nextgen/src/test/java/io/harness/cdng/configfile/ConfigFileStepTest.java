@@ -120,7 +120,7 @@ public class ConfigFileStepTest extends CDNGTestBase {
     HarnessStore store = (HarnessStore) configFileOutcome.getStore();
     assertThat(store.getFilePath().getValue()).isEqualTo(FILE_PATH);
     assertThat(store.getFileReference().getValue()).isEqualTo(FILE_REFERENCE);
-    assertThat(store.getFileType().getValue()).isEqualTo(HarnessFileType.FILE_STORE);
+    assertThat(store.getFileType()).isEqualTo(HarnessFileType.FILE_STORE);
   }
 
   @Test
@@ -164,7 +164,7 @@ public class ConfigFileStepTest extends CDNGTestBase {
     HarnessStore store = (HarnessStore) configFileOutcome.getStore();
     assertThat(store.getFilePath().getValue()).isEqualTo(FILE_PATH_OVERRIDE);
     assertThat(store.getFileReference().getValue()).isEqualTo(FILE_REFERENCE_OVERRIDE);
-    assertThat(store.getFileType().getValue()).isEqualTo(HarnessFileType.FILE_STORE);
+    assertThat(store.getFileType()).isEqualTo(HarnessFileType.FILE_STORE);
   }
 
   @Test
@@ -233,13 +233,13 @@ public class ConfigFileStepTest extends CDNGTestBase {
   private ConfigFileAttributes getConfigFileAttributesWithHarnessStore() {
     return ConfigFileAttributes.builder()
         .hostDestination(ParameterField.createValueField(HOST_DESTINATION))
-        .type(ParameterField.createValueField(ConfigFileType.LOCAL_FILE))
+        .type(ConfigFileType.LOCAL_FILE)
         .store(ParameterField.createValueField(
             StoreConfigWrapper.builder()
                 .type(StoreConfigType.HARNESS)
                 .spec(HarnessStore.builder()
                           .filePath(ParameterField.createValueField(FILE_PATH))
-                          .fileType(ParameterField.createValueField(HarnessFileType.FILE_STORE))
+                          .fileType(HarnessFileType.FILE_STORE)
                           .fileReference(ParameterField.createValueField(FILE_REFERENCE))
                           .build())
                 .build()))
@@ -249,13 +249,13 @@ public class ConfigFileStepTest extends CDNGTestBase {
   private ConfigFileAttributes getConfigFileAttributesOverride() {
     return ConfigFileAttributes.builder()
         .hostDestination(ParameterField.createValueField(HOST_DESTINATION_OVERRIDE))
-        .type(ParameterField.createValueField(ConfigFileType.LOCAL_FILE))
+        .type(ConfigFileType.LOCAL_FILE)
         .store(ParameterField.createValueField(
             StoreConfigWrapper.builder()
                 .type(StoreConfigType.HARNESS)
                 .spec(HarnessStore.builder()
                           .filePath(ParameterField.createValueField(FILE_PATH_OVERRIDE))
-                          .fileType(ParameterField.createValueField(HarnessFileType.FILE_STORE))
+                          .fileType(HarnessFileType.FILE_STORE)
                           .fileReference(ParameterField.createValueField(FILE_REFERENCE_OVERRIDE))
                           .build())
                 .build()))
@@ -265,7 +265,7 @@ public class ConfigFileStepTest extends CDNGTestBase {
   private ConfigFileAttributes getConfigFileAttributesWithGitStore() {
     return ConfigFileAttributes.builder()
         .hostDestination(ParameterField.createValueField(HOST_DESTINATION))
-        .type(ParameterField.createValueField(ConfigFileType.LOCAL_FILE))
+        .type(ConfigFileType.LOCAL_FILE)
         .store(
             ParameterField.createValueField(StoreConfigWrapper.builder()
                                                 .type(StoreConfigType.GIT)

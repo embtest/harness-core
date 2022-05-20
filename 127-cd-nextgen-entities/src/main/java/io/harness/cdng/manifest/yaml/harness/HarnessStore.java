@@ -51,19 +51,22 @@ public class HarnessStore implements HarnessStoreConfig, Visitable {
   private String uuid;
 
   @NotNull
-  @ApiModelProperty(dataType = SwaggerConstants.STRING_CLASSPATH)
   @Wither
+  @ApiModelProperty(dataType = SwaggerConstants.STRING_CLASSPATH)
+  @JsonProperty("fileReference")
   private ParameterField<String> fileReference;
 
   @NotNull
-  @ApiModelProperty(dataType = SwaggerConstants.STRING_CLASSPATH)
   @Wither
+  @ApiModelProperty(dataType = SwaggerConstants.STRING_CLASSPATH)
+  @JsonProperty("filePath")
   private ParameterField<String> filePath;
 
   @NotNull
-  @ApiModelProperty("io.harness.cdng.manifest.yaml.configfile.HarnessFileType")
   @Wither
-  private ParameterField<HarnessFileType> fileType;
+  @ApiModelProperty("io.harness.cdng.manifest.yaml.harness.HarnessFileType")
+  @JsonProperty("fileType")
+  private HarnessFileType fileType;
 
   // For Visitor Framework Impl
   @Getter(onMethod_ = { @ApiModelProperty(hidden = true) }) @ApiModelProperty(hidden = true) String metadata;
@@ -99,7 +102,7 @@ public class HarnessStore implements HarnessStoreConfig, Visitable {
       resultantHarnessStore = resultantHarnessStore.withFilePath(harnessStore.getFilePath());
     }
 
-    if (!ParameterField.isNull(harnessStore.getFileType())) {
+    if (harnessStore.getFileType() != null) {
       resultantHarnessStore = resultantHarnessStore.withFileType(harnessStore.getFileType());
     }
 
@@ -117,7 +120,7 @@ public class HarnessStore implements HarnessStoreConfig, Visitable {
     return HarnessStoreDTO.builder()
         .fileReference(ParameterFieldHelper.getParameterFieldValue(fileReference))
         .filePath(ParameterFieldHelper.getParameterFieldValue(filePath))
-        .fileType(ParameterFieldHelper.getParameterFieldValue(fileType))
+        .fileType(fileType)
         .build();
   }
 }

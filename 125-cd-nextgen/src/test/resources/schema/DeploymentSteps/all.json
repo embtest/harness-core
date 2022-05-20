@@ -1000,15 +1000,23 @@
           "type": "object",
           "required": [
             "filePath",
+            "fileReference",
             "fileType"
           ],
           "properties": {
             "filePath": {
               "type": "string"
             },
+            "fileReference": {
+              "type": "string"
+            },
             "fileType": {
-              "description": "io.harness.cdng.manifest.yaml.configfile.HarnessFileType",
-              "$ref": "#/definitions/ParameterFieldHarnessFileType"
+              "type": "string",
+              "description": "io.harness.cdng.manifest.yaml.harness.HarnessFileType",
+              "enum": [
+                "FileStore",
+                "Encrypted"
+              ]
             }
           }
         }
@@ -2291,37 +2299,6 @@
         },
         "value": {
           "type": "boolean"
-        }
-      },
-      "$schema": "http://json-schema.org/draft-07/schema#"
-    },
-    "ParameterFieldHarnessFileType": {
-      "type": "object",
-      "properties": {
-        "expression": {
-          "type": "boolean"
-        },
-        "expressionValue": {
-          "type": "string"
-        },
-        "inputSetValidator": {
-          "$ref": "#/definitions/InputSetValidator"
-        },
-        "jsonResponseField": {
-          "type": "boolean"
-        },
-        "responseField": {
-          "type": "string"
-        },
-        "typeString": {
-          "type": "boolean"
-        },
-        "value": {
-          "type": "string",
-          "enum": [
-            "FileStore",
-            "Encrypted"
-          ]
         }
       },
       "$schema": "http://json-schema.org/draft-07/schema#"

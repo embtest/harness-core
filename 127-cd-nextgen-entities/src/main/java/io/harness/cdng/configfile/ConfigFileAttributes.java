@@ -26,6 +26,7 @@ import io.harness.yaml.core.intfc.OverridesApplier;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -47,6 +48,7 @@ import org.springframework.data.annotation.TypeAlias;
 @OwnedBy(CDP)
 @RecasterAlias("io.harness.cdng.configfile.ConfigFileAttributes")
 public class ConfigFileAttributes implements OverridesApplier<ConfigFileAttributes>, Visitable {
+  @NotNull
   @Wither
   @ApiModelProperty(dataType = "io.harness.cdng.manifest.yaml.storeConfig.StoreConfigWrapper")
   @JsonProperty("store")
@@ -58,10 +60,11 @@ public class ConfigFileAttributes implements OverridesApplier<ConfigFileAttribut
   @JsonProperty("hostDestination")
   private ParameterField<String> hostDestination;
 
+  @NotNull
   @Wither
   @ApiModelProperty(dataType = "io.harness.cdng.configfile.ConfigFileType")
-  @JsonProperty("fileType")
-  ParameterField<ConfigFileType> type;
+  @JsonProperty("type")
+  ConfigFileType type;
 
   // For Visitor Framework Impl
   @Getter(onMethod_ = { @ApiModelProperty(hidden = true) }) @ApiModelProperty(hidden = true) String metadata;
@@ -95,8 +98,7 @@ public class ConfigFileAttributes implements OverridesApplier<ConfigFileAttribut
 
   public ConfigFileAttributeStepParameters getConfigFileAttributeStepParameters() {
     return new ConfigFileAttributeStepParameters(StoreConfigWrapperParameters.fromStoreConfigWrapper(store.getValue()),
-        ParameterFieldHelper.getParameterFieldValue(type),
-        ParameterFieldHelper.getParameterFieldValue(hostDestination));
+        type, ParameterFieldHelper.getParameterFieldValue(hostDestination));
   }
 
   @Value

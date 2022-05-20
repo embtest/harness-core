@@ -27,7 +27,7 @@ public class HarnessStoreDTO {
     return HarnessStore.builder()
         .fileReference(ParameterField.createValueField(fileReference))
         .filePath(ParameterField.createValueField(filePath))
-        .fileType(ParameterField.createValueField(fileType))
+        .fileType(fileType)
         .build();
   }
 }
