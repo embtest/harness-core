@@ -1005,10 +1005,12 @@
           ],
           "properties": {
             "filePath": {
-              "type": "string"
+              "type": "string",
+              "minLength": 1
             },
             "fileReference": {
-              "type": "string"
+              "type": "string",
+              "minLength": 1
             },
             "fileType": {
               "type": "string",

@@ -34,6 +34,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.Wither;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.annotation.TypeAlias;
 
 @OwnedBy(CDP)
@@ -51,12 +52,14 @@ public class HarnessStore implements HarnessStoreConfig, Visitable {
   private String uuid;
 
   @NotNull
+  @NotEmpty
   @Wither
   @ApiModelProperty(dataType = SwaggerConstants.STRING_CLASSPATH)
   @JsonProperty("fileReference")
   private ParameterField<String> fileReference;
 
   @NotNull
+  @NotEmpty
   @Wither
   @ApiModelProperty(dataType = SwaggerConstants.STRING_CLASSPATH)
   @JsonProperty("filePath")

@@ -24,7 +24,6 @@ import org.springframework.data.annotation.TypeAlias;
 @RecasterAlias("io.harness.cdng.configfile.steps.ConfigFileStepParameters")
 public class ConfigFileStepParameters implements StepParameters {
   String identifier;
-  String type;
   ConfigFileAttributes spec;
   ConfigFileAttributes stageOverride;
   int order;

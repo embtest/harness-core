@@ -135,12 +135,12 @@ public class ConfigFilesPlanCreator extends ChildrenPlanCreator<ConfigFiles> {
 
   @Override
   public PlanNode createPlanForParentNode(PlanCreationContext ctx, ConfigFiles config, List<String> childrenNodeIds) {
-    String manifestsId = (String) kryoSerializer.asInflatedObject(
+    String configFilesId = (String) kryoSerializer.asInflatedObject(
         ctx.getDependency().getMetadataMap().get(YamlTypes.UUID).toByteArray());
 
     ForkStepParameters stepParameters = ForkStepParameters.builder().parallelNodeIds(childrenNodeIds).build();
     return PlanNode.builder()
-        .uuid(manifestsId)
+        .uuid(configFilesId)
         .stepType(ConfigFilesStep.STEP_TYPE)
         .name(PlanCreatorConstants.CONFIG_FILES_NODE_NAME)
         .identifier(YamlTypes.CONFIG_FILES)
