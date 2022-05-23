@@ -350,6 +350,11 @@ io.harness.cdng.environment.yaml.EnvironmentPlanCreatorConfig
 io.harness.cdng.gitops.yaml.ClusterYaml
 io.harness.cdng.provision.cloudformation.CloudformationCreateStackStepConfigurationParameters
 io.harness.cdng.environment.steps.EnvironmentStepParameters
+io.harness.plancreator.strategy.AxisConfig
+io.harness.plancreator.strategy.ExcludeConfig
+io.harness.plancreator.strategy.MatrixConfig
+io.harness.plancreator.strategy.StrategyConfig
+io.harness.plancreator.strategy.HarnessForConfig
 io.harness.cdng.configfile.ConfigFileWrapper
 io.harness.cdng.configfile.ConfigFile
 io.harness.cdng.configfile.ConfigFileOutcome
