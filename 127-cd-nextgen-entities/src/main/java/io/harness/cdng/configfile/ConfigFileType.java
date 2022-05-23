@@ -11,13 +11,14 @@ import io.harness.annotations.dev.HarnessTeam;
 import io.harness.annotations.dev.OwnedBy;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 @OwnedBy(HarnessTeam.CDP)
 public enum ConfigFileType {
-  LOCAL_FILE("LocalFile"),
-  ENCRYPTED("Encrypted"),
-  REMOTE("Remote");
+  @JsonProperty("LocalFile") LOCAL_FILE("LocalFile"),
+  @JsonProperty("Encrypted") ENCRYPTED("Encrypted"),
+  @JsonProperty("Remote") REMOTE("Remote");
 
   private final String value;
 
@@ -26,7 +27,7 @@ public enum ConfigFileType {
   }
 
   @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-  public static ConfigFileType fromString(final String value) {
+  public static ConfigFileType fromString(@JsonProperty("type") final String value) {
     for (ConfigFileType type : ConfigFileType.values()) {
       if (type.toString().equalsIgnoreCase(value)) {
         return type;
