@@ -50,5 +50,6 @@ public class NGServiceV2InfoConfig {
   String projectIdentifier;
   @ApiModelProperty(dataType = SwaggerConstants.STRING_CLASSPATH) String description;
   Map<String, String> tags;
+  boolean gitOpsEnabled;
   ServiceDefinition serviceDefinition;
 }
