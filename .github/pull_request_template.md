@@ -6,7 +6,7 @@
 - [ ] If hashcheck failed I followed the [the checklist](https://harness.atlassian.net/wiki/spaces/DEL/pages/21016838831/PR+Codebasehash+Check+merge+checklist) and updated this PR description with my answers to make sure I'm not introducing any breaking changes.
 
 ## Triggers
-Following triggers start the buil
+Following triggers start the build
 - Feature build: `trigger feature-build`
 - Immutable delegate `trigger publish-delegate`
 
