@@ -1113,7 +1113,7 @@
     "ConfigFileAttributeStepParameters": {
       "type": "object",
       "properties": {
-        "hostDestination": {
+        "hostRelativeFilePath": {
           "type": "string"
         },
         "store": {
@@ -1140,7 +1140,7 @@
         "configFileAttributeStepParameters": {
           "$ref": "#/definitions/ConfigFileAttributeStepParameters"
         },
-        "hostDestination": {
+        "hostRelativeFilePath": {
           "type": "string"
         },
         "store": {

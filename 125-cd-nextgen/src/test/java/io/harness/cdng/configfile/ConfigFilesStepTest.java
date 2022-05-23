@@ -51,13 +51,13 @@ public class ConfigFilesStepTest extends CDNGTestBase {
   @Category(UnitTests.class)
   public void testHandleChildrenResponse() {
     String identifier = "identifier";
-    String hostDestination = "host/destination";
+    String hostRelativeFilePath = "host/destination";
     Ambiance ambiance = Ambiance.newBuilder().build();
     Map<String, ResponseData> responseData = new HashMap<>();
     when(serviceStepsHelper.getChildrenOutcomes(responseData))
         .thenReturn(Collections.singletonList(ConfigFileOutcome.builder()
                                                   .identifier(identifier)
-                                                  .hostDestination(hostDestination)
+                                                  .hostRelativeFilePath(hostRelativeFilePath)
                                                   .configFileType(ConfigFileType.LOCAL_FILE)
                                                   .build()));
     when(executionSweepingOutputService.listOutputsWithGivenNameAndSetupIds(
@@ -75,6 +75,6 @@ public class ConfigFilesStepTest extends CDNGTestBase {
     ConfigFileOutcome configFileOutcome = configFilesOutcome.get(identifier);
     assertThat(configFileOutcome.getConfigFileType()).isEqualTo(ConfigFileType.LOCAL_FILE);
     assertThat(configFileOutcome.getIdentifier()).isEqualTo(identifier);
-    assertThat(configFileOutcome.getHostDestination()).isEqualTo(hostDestination);
+    assertThat(configFileOutcome.getHostRelativeFilePath()).isEqualTo(hostRelativeFilePath);
   }
 }

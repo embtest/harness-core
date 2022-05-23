@@ -57,8 +57,8 @@ public class ConfigFileAttributes implements OverridesApplier<ConfigFileAttribut
 
   @Wither
   @ApiModelProperty(dataType = SwaggerConstants.STRING_CLASSPATH)
-  @JsonProperty("hostDestination")
-  private ParameterField<String> hostDestination;
+  @JsonProperty("hostRelativeFilePath")
+  private ParameterField<String> hostRelativeFilePath;
 
   @NotNull
   @Wither
@@ -78,8 +78,8 @@ public class ConfigFileAttributes implements OverridesApplier<ConfigFileAttribut
           ParameterField.createValueField(this.store.getValue().applyOverrides(overrideConfig.getStore().getValue())));
     }
 
-    if (overrideConfig.getHostDestination() != null) {
-      configFileAttributes = configFileAttributes.withHostDestination(overrideConfig.getHostDestination());
+    if (overrideConfig.getHostRelativeFilePath() != null) {
+      configFileAttributes = configFileAttributes.withHostRelativeFilePath(overrideConfig.getHostRelativeFilePath());
     }
 
     if (overrideConfig.getType() != null) {
@@ -98,13 +98,13 @@ public class ConfigFileAttributes implements OverridesApplier<ConfigFileAttribut
 
   public ConfigFileAttributeStepParameters getConfigFileAttributeStepParameters() {
     return new ConfigFileAttributeStepParameters(StoreConfigWrapperParameters.fromStoreConfigWrapper(store.getValue()),
-        type, ParameterFieldHelper.getParameterFieldValue(hostDestination));
+        type, ParameterFieldHelper.getParameterFieldValue(hostRelativeFilePath));
   }
 
   @Value
   public static class ConfigFileAttributeStepParameters {
     StoreConfigWrapperParameters store;
     ConfigFileType type;
-    String hostDestination;
+    String hostRelativeFilePath;
   }
 }
