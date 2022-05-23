@@ -11,9 +11,11 @@ import static io.harness.annotations.dev.HarnessTeam.CDC;
 import static io.harness.data.structure.EmptyPredicate.isNotEmpty;
 
 import io.harness.annotations.dev.OwnedBy;
+import io.harness.cdng.creator.plan.gitops.ClusterPlanCreator;
 import io.harness.cdng.creator.plan.infrastructure.InfrastructurePmsPlanCreator;
 import io.harness.cdng.creator.plan.service.ServicePlanCreator;
 import io.harness.cdng.creator.plan.service.ServicePlanCreatorHelper;
+import io.harness.cdng.envgroup.yaml.EnvironmentGroupYaml;
 import io.harness.cdng.environment.helper.EnvironmentPlanCreatorConfigMapper;
 import io.harness.cdng.environment.yaml.EnvironmentPlanCreatorConfig;
 import io.harness.cdng.environment.yaml.EnvironmentYamlV2;
@@ -165,6 +167,8 @@ public class DeploymentStagePMSPlanCreatorV2 extends AbstractStagePlanCreator<De
 
       PipelineInfrastructure pipelineInfrastructure = stageNode.getDeploymentStageConfig().getInfrastructure();
       addEnvAndInfraDependency(ctx, stageNode, planCreationResponseMap, specField, pipelineInfrastructure);
+      addGitopsClustersDependency(planCreationResponseMap, stageNode.getDeploymentStageConfig().getEnvironmentGroup(),
+          stageNode.getDeploymentStageConfig().getEnvironment());
 
       // Add dependency for execution
       YamlField executionField = specField.getNode().getField(YAMLFieldNameConstants.EXECUTION);
@@ -177,6 +181,17 @@ public class DeploymentStagePMSPlanCreatorV2 extends AbstractStagePlanCreator<De
     } catch (IOException e) {
       throw new InvalidRequestException(
           "Invalid yaml for Deployment stage with identifier - " + stageNode.getIdentifier(), e);
+    }
+  }
+
+  private void addGitopsClustersDependency(LinkedHashMap<String, PlanCreationResponse> planCreationResponseMap,
+      EnvironmentGroupYaml envGroupYaml, EnvironmentYamlV2 envV2) {
+    if (envGroupYaml != null) {
+      PlanNode gitopsNode = ClusterPlanCreator.getGitopsClustersStepPlanNode(envGroupYaml);
+      planCreationResponseMap.put(gitopsNode.getUuid(), PlanCreationResponse.builder().planNode(gitopsNode).build());
+    } else if (envV2 != null) {
+      PlanNode gitopsNode = ClusterPlanCreator.getGitopsClustersStepPlanNode(envV2);
+      planCreationResponseMap.put(gitopsNode.getUuid(), PlanCreationResponse.builder().planNode(gitopsNode).build());
     }
   }
 

@@ -31,6 +31,7 @@ public class PlanCreatorConstants {
   public final String MANIFESTS_NODE_NAME = "Manifests";
   public final String MANIFEST_NODE_NAME = "Manifest";
   public final String INFRA_NODE_NAME = "Infrastructure";
+  public final String GITOPS_INFRA_NODE_NAME = "GitopsClusters";
   public final String SPEC_IDENTIFIER = "spec";
 
   // DependencyMetadata constants
