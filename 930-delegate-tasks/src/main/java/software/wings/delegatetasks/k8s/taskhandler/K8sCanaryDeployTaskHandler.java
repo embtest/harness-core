@@ -286,7 +286,7 @@ public class K8sCanaryDeployTaskHandler extends K8sTaskHandler {
 
       boolean success = k8sCanaryBaseHandler.prepareForCanary(canaryHandlerConfig, k8sDelegateTaskParams,
           k8sCanaryDeployTaskParameters.getSkipVersioningForAllK8sObjects(), executionLogCallback, false,
-          k8sCanaryDeployTaskParameters.isCleanUpPrevInProgressCanaryRelease());
+          k8sCanaryDeployTaskParameters.isCleanUpIncompleteCanaryDeployRelease());
       if (!success) {
         return false;
       }

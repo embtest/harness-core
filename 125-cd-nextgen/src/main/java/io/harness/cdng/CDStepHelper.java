@@ -650,7 +650,7 @@ public class CDStepHelper {
     return cdFeatureFlagHelper.isEnabled(accountId, FeatureName.NEW_KUBECTL_VERSION);
   }
 
-  public boolean isCleanUpPrevInProgressCanaryRelease(String accountId) {
+  public boolean isCleanUpIncompleteCanaryDeployRelease(String accountId) {
     return cdFeatureFlagHelper.isEnabled(accountId, FeatureName.CLEANUP_INCOMPLETE_CANARY_DEPLOY_RELEASE);
   }
   public boolean isSkipAddingTrackSelectorToDeployment(String accountId) {

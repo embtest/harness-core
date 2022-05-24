@@ -196,7 +196,7 @@ public class K8sCanaryDeploy extends AbstractK8sState {
                 appManifestMap.get(K8sValuesLocation.Service).getSkipVersioningForAllK8sObjects())
             .useLatestKustomizeVersion(isUseLatestKustomizeVersion(context.getAccountId()))
             .useNewKubectlVersion(featureFlagService.isEnabled(NEW_KUBECTL_VERSION, infraMapping.getAccountId()))
-            .cleanUpPrevInProgressCanaryRelease(
+            .cleanUpIncompleteCanaryDeployRelease(
                 featureFlagService.isEnabled(CLEANUP_INCOMPLETE_CANARY_DEPLOY_RELEASE, infraMapping.getAccountId()))
             .build();
 

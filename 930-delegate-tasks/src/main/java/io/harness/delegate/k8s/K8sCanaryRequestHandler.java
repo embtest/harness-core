@@ -215,7 +215,7 @@ public class K8sCanaryRequestHandler extends K8sRequestHandler {
       LogCallback logCallback) throws Exception {
     k8sCanaryBaseHandler.prepareForCanary(k8sCanaryHandlerConfig, k8sDelegateTaskParams,
         k8sCanaryDeployRequest.isSkipResourceVersioning(), logCallback, true,
-        k8sCanaryDeployRequest.isCleanUpPrevInProgressCanaryRelease());
+        k8sCanaryDeployRequest.isCleanUpIncompleteCanaryDeployRelease());
     Integer currentInstances =
         k8sCanaryBaseHandler.getCurrentInstances(k8sCanaryHandlerConfig, k8sDelegateTaskParams, logCallback);
     Integer targetInstances = currentInstances;

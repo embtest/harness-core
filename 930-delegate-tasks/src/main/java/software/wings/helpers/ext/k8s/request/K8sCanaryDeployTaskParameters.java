@@ -46,7 +46,7 @@ public class K8sCanaryDeployTaskParameters extends K8sTaskParameters implements 
   private boolean skipDryRun;
   private boolean exportManifests;
   private boolean inheritManifests;
-  private boolean cleanUpPrevInProgressCanaryRelease;
+  private boolean cleanUpIncompleteCanaryDeployRelease;
   private List<KubernetesResource> kubernetesResources;
 
   @Builder
@@ -57,7 +57,7 @@ public class K8sCanaryDeployTaskParameters extends K8sTaskParameters implements 
       HelmVersion helmVersion, Boolean skipVersioningForAllK8sObjects, Set<String> delegateSelectors,
       boolean exportManifests, boolean inheritManifests, List<KubernetesResource> kubernetesResources,
       boolean useLatestChartMuseumVersion, boolean useLatestKustomizeVersion, boolean useNewKubectlVersion,
-      boolean cleanUpPrevInProgressCanaryRelease) {
+      boolean cleanUpIncompleteCanaryDeployRelease) {
     super(accountId, appId, commandName, activityId, k8sClusterConfig, workflowExecutionId, releaseName,
         timeoutIntervalInMin, k8sTaskType, helmVersion, delegateSelectors, useLatestChartMuseumVersion,
         useLatestKustomizeVersion, useNewKubectlVersion);
@@ -70,7 +70,7 @@ public class K8sCanaryDeployTaskParameters extends K8sTaskParameters implements 
     this.skipVersioningForAllK8sObjects = skipVersioningForAllK8sObjects;
     this.exportManifests = exportManifests;
     this.inheritManifests = inheritManifests;
-    this.cleanUpPrevInProgressCanaryRelease = cleanUpPrevInProgressCanaryRelease;
+    this.cleanUpIncompleteCanaryDeployRelease = cleanUpIncompleteCanaryDeployRelease;
     this.kubernetesResources = kubernetesResources;
   }
 
