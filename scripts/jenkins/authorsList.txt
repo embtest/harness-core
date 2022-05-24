@@ -273,3 +273,4 @@ Soumyajit Das soumyajit.das@harness.io
 smjt-h soumyajit.das@harness.io
 Avinash Madhwani avinash.m@harness.io
 Raj Babu Das rajbabu.das@harness.io
+Vansh Bhatia vansh.bhatia@harness.io
