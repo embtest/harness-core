@@ -340,7 +340,8 @@ public class EnvironmentResourceV2 {
       {
         @io.swagger.v3.oas.annotations.responses.
         ApiResponse(description = "Returns the list of Environments for a Project")
-      })
+      },
+      hidden = true)
   public ResponseDTO<PageResponse<EnvironmentResponse>>
   listEnvironmentsV2(@Parameter(description = NGCommonEntityConstants.PAGE_PARAM_MESSAGE) @QueryParam(
                          NGCommonEntityConstants.PAGE) @DefaultValue("0") int page,
