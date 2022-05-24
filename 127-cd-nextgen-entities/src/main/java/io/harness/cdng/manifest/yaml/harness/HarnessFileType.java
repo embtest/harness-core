@@ -12,12 +12,13 @@ import static io.harness.annotations.dev.HarnessTeam.CDP;
 import io.harness.annotations.dev.OwnedBy;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 @OwnedBy(CDP)
 public enum HarnessFileType {
-  FILE_STORE("FileStore"),
-  ENCRYPTED("Encrypted");
+  @JsonProperty("FileStore") FILE_STORE("FileStore"),
+  @JsonProperty("Encrypted") ENCRYPTED("Encrypted");
 
   private final String value;
 

@@ -30,12 +30,12 @@ import org.springframework.data.annotation.TypeAlias;
 @RecasterAlias("io.harness.cdng.configfile.ConfigFileWrapper")
 @OwnedBy(HarnessTeam.CDP)
 public class ConfigFileWrapper implements Visitable {
-  ConfigFile configFile;
-
   @JsonProperty(YamlNode.UUID_FIELD_NAME)
   @Getter(onMethod_ = { @ApiModelProperty(hidden = true) })
   @ApiModelProperty(hidden = true)
   String uuid;
+
+  ConfigFile configFile;
 
   @Getter(onMethod_ = { @ApiModelProperty(hidden = true) }) @ApiModelProperty(hidden = true) String metadata;
 

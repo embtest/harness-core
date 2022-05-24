@@ -56,7 +56,6 @@ serviceDefinition:
                   - test/1
                 repoName: repoName
                 branch: test
-            hostDestionation: tmp/deploy
             type: Remote
       - configFile:
           identifier: harnessFSConfigFileIdentifier
@@ -67,7 +66,6 @@ serviceDefinition:
                 fileReference: harnessFSFileIdentifier
                 filePath: Root/folder_1/filename.txt
                 fileType: FileStore
-            hostDestionation: tmp/deploy
             type: LocalFile
       - configFile:
           identifier: harnessEncConfigFileIdentifier
@@ -78,7 +76,6 @@ serviceDefinition:
                 fileReference: harnessEncFileIdentifier
                 filePath: secretManagerIdentifier
                 fileType: Encrypted
-            hostDestionation: tmp/deploy
             type: Encrypted
     manifestOverrideSets: []
     variables: []

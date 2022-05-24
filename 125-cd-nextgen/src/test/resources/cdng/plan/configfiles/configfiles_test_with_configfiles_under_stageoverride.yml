@@ -14,7 +14,6 @@ stageOverrides:
                 - test/1
               repoName: repoName
               branch: test
-          hostDestionation: tmp/deploy
           type: Remote
     - configFile:
         identifier: harnessFSConfigFileIdentifier
@@ -25,7 +24,6 @@ stageOverrides:
               fileReference: harnessFSFileIdentifier
               filePath: Root/folder_1/filename.txt
               fileType: FileStore
-          hostDestionation: tmp/deploy
           type: LocalFile
     - configFile:
         identifier: harnessEncConfigFileIdentifier
@@ -36,7 +34,6 @@ stageOverrides:
               fileReference: harnessEncFileIdentifier
               filePath: secretManagerIdentifier
               fileType: Encrypted
-          hostDestionation: tmp/deploy
           type: Encrypted
   manifestOverrideSets: []
   variables: []
