@@ -155,13 +155,13 @@ public class ExecutionHelper {
       RetryExecutionInfo retryExecutionInfo = buildRetryInfo(isRetry, originalExecutionId);
 
       String pipelineYaml = getPipelineYamlAndValidate(mergedRuntimeInputYaml, pipelineEntity);
+      BasicPipeline basicPipeline = YamlUtils.read(pipelineYaml, BasicPipeline.class);
       StagesExecutionInfo stagesExecutionInfo = StagesExecutionInfo.builder()
                                                     .isStagesExecution(false)
                                                     .pipelineYamlToRun(pipelineYaml)
-                                                    .allowStagesExecution(pipelineEntity.shouldAllowStageExecutions())
+                                                    .allowStagesExecution(basicPipeline.isAllowStageExecutions())
                                                     .build();
       if (EmptyPredicate.isNotEmpty(stagesToRun)) {
-        BasicPipeline basicPipeline = YamlUtils.read(pipelineYaml, BasicPipeline.class);
         if (!basicPipeline.isAllowStageExecutions()) {
           throw new InvalidRequestException(
               String.format("Stage executions are not allowed for pipeline [%s]", basicPipeline.getIdentifier()));
