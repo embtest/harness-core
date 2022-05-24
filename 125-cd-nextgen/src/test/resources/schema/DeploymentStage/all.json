@@ -1113,9 +1113,6 @@
     "ConfigFileAttributeStepParameters": {
       "type": "object",
       "properties": {
-        "hostRelativeFilePath": {
-          "type": "string"
-        },
         "store": {
           "$ref": "#/definitions/StoreConfigWrapperParameters"
         },
@@ -1139,9 +1136,6 @@
       "properties": {
         "configFileAttributeStepParameters": {
           "$ref": "#/definitions/ConfigFileAttributeStepParameters"
-        },
-        "hostRelativeFilePath": {
-          "type": "string"
         },
         "store": {
           "$ref": "#/definitions/StoreConfigWrapper"

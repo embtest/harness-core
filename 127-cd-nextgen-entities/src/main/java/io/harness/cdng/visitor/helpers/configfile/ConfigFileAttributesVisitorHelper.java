@@ -22,7 +22,6 @@ public class ConfigFileAttributesVisitorHelper implements ConfigValidator {
     ConfigFileAttributes configFileAttributes = (ConfigFileAttributes) originalElement;
     return ConfigFileAttributes.builder()
         .store(configFileAttributes.getStore())
-        .hostRelativeFilePath(configFileAttributes.getHostRelativeFilePath())
         .type(configFileAttributes.getType())
         .build();
   }

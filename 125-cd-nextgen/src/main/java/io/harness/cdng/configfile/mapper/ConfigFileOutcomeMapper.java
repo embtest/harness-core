@@ -28,8 +28,6 @@ public final class ConfigFileOutcomeMapper {
     return ConfigFileOutcome.builder()
         .identifier(configFileStepParameters.getIdentifier())
         .store(store)
-        .hostRelativeFilePath(
-            ParameterFieldHelper.getParameterFieldValue(configFileAttributes.getHostRelativeFilePath()))
         .configFileType(configFileAttributes.getType())
         .order(configFileStepParameters.getOrder())
         .build();

@@ -12,10 +12,8 @@ import static io.harness.cdng.manifest.yaml.storeConfig.StoreConfigWrapper.Store
 
 import io.harness.annotation.RecasterAlias;
 import io.harness.annotations.dev.OwnedBy;
-import io.harness.beans.SwaggerConstants;
 import io.harness.cdng.manifest.yaml.storeConfig.StoreConfigWrapper;
 import io.harness.cdng.visitor.helpers.configfile.ConfigFileAttributesVisitorHelper;
-import io.harness.common.ParameterFieldHelper;
 import io.harness.pms.yaml.ParameterField;
 import io.harness.pms.yaml.SkipAutoEvaluation;
 import io.harness.pms.yaml.YAMLFieldNameConstants;
@@ -61,11 +59,6 @@ public class ConfigFileAttributes implements OverridesApplier<ConfigFileAttribut
   @SkipAutoEvaluation
   ParameterField<StoreConfigWrapper> store;
 
-  @Wither
-  @ApiModelProperty(dataType = SwaggerConstants.STRING_CLASSPATH)
-  @JsonProperty("hostRelativeFilePath")
-  private ParameterField<String> hostRelativeFilePath;
-
   @NotNull
   @Wither
   @ApiModelProperty(dataType = "io.harness.cdng.configfile.ConfigFileType")
@@ -84,10 +77,6 @@ public class ConfigFileAttributes implements OverridesApplier<ConfigFileAttribut
           ParameterField.createValueField(this.store.getValue().applyOverrides(overrideConfig.getStore().getValue())));
     }
 
-    if (overrideConfig.getHostRelativeFilePath() != null) {
-      configFileAttributes = configFileAttributes.withHostRelativeFilePath(overrideConfig.getHostRelativeFilePath());
-    }
-
     if (overrideConfig.getType() != null) {
       configFileAttributes = configFileAttributes.withType(overrideConfig.getType());
     }
@@ -103,14 +92,13 @@ public class ConfigFileAttributes implements OverridesApplier<ConfigFileAttribut
   }
 
   public ConfigFileAttributeStepParameters getConfigFileAttributeStepParameters() {
-    return new ConfigFileAttributeStepParameters(StoreConfigWrapperParameters.fromStoreConfigWrapper(store.getValue()),
-        type, ParameterFieldHelper.getParameterFieldValue(hostRelativeFilePath));
+    return new ConfigFileAttributeStepParameters(
+        StoreConfigWrapperParameters.fromStoreConfigWrapper(store.getValue()), type);
   }
 
   @Value
   public static class ConfigFileAttributeStepParameters {
     StoreConfigWrapperParameters store;
     ConfigFileType type;
-    String hostRelativeFilePath;
   }
 }

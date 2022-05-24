@@ -32,7 +32,6 @@ import org.springframework.data.annotation.TypeAlias;
 public class ConfigFileOutcome implements Outcome, WithIdentifier {
   String identifier;
   StoreConfig store;
-  String hostRelativeFilePath;
   ConfigFileType configFileType;
   int order;
 }

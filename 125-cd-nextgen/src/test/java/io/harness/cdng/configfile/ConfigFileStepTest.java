@@ -55,10 +55,8 @@ import org.mockito.Mock;
 @OwnedBy(CDP)
 public class ConfigFileStepTest extends CDNGTestBase {
   private static final String IDENTIFIER = "identifier";
-  private static final String HOST_DESTINATION = "host/destination";
   private static final String FILE_PATH = "file/path";
   private static final String FILE_REFERENCE = "account.fileReference";
-  private static final String HOST_DESTINATION_OVERRIDE = "host/destination/override";
   private static final String FILE_PATH_OVERRIDE = "file/path/override";
   private static final String FILE_REFERENCE_OVERRIDE = "account.fileReferenceOverride";
   private static final String MASTER = "master";
@@ -90,11 +88,8 @@ public class ConfigFileStepTest extends CDNGTestBase {
     Ambiance ambiance = getAmbiance();
     Map<String, ResponseData> responseData = new HashMap<>();
     when(serviceStepsHelper.getChildrenOutcomes(responseData))
-        .thenReturn(Collections.singletonList(ConfigFileOutcome.builder()
-                                                  .identifier(IDENTIFIER)
-                                                  .hostRelativeFilePath(HOST_DESTINATION)
-                                                  .configFileType(ConfigFileType.LOCAL_FILE)
-                                                  .build()));
+        .thenReturn(Collections.singletonList(
+            ConfigFileOutcome.builder().identifier(IDENTIFIER).configFileType(ConfigFileType.LOCAL_FILE).build()));
     when(executionSweepingOutputService.listOutputsWithGivenNameAndSetupIds(
              any(), eq(FAILED_CHILDREN_OUTPUT), anyList()))
         .thenReturn(Collections.emptyList());
@@ -114,7 +109,6 @@ public class ConfigFileStepTest extends CDNGTestBase {
     ConfigFileOutcome configFileOutcome = (ConfigFileOutcome) stepOutcomes[0].getOutcome();
     assertThat(configFileOutcome.getConfigFileType()).isEqualTo(ConfigFileType.LOCAL_FILE);
     assertThat(configFileOutcome.getIdentifier()).isEqualTo(IDENTIFIER);
-    assertThat(configFileOutcome.getHostRelativeFilePath()).isEqualTo(HOST_DESTINATION);
 
     assertThat(configFileOutcome.getStore().getKind()).isEqualTo(StoreConfigType.HARNESS.getDisplayName());
     HarnessStore store = (HarnessStore) configFileOutcome.getStore();
@@ -130,11 +124,8 @@ public class ConfigFileStepTest extends CDNGTestBase {
     Ambiance ambiance = getAmbiance();
     Map<String, ResponseData> responseData = new HashMap<>();
     when(serviceStepsHelper.getChildrenOutcomes(responseData))
-        .thenReturn(Collections.singletonList(ConfigFileOutcome.builder()
-                                                  .identifier(IDENTIFIER)
-                                                  .hostRelativeFilePath(HOST_DESTINATION)
-                                                  .configFileType(ConfigFileType.LOCAL_FILE)
-                                                  .build()));
+        .thenReturn(Collections.singletonList(
+            ConfigFileOutcome.builder().identifier(IDENTIFIER).configFileType(ConfigFileType.LOCAL_FILE).build()));
     when(executionSweepingOutputService.listOutputsWithGivenNameAndSetupIds(
              any(), eq(FAILED_CHILDREN_OUTPUT), anyList()))
         .thenReturn(Collections.emptyList());
@@ -158,7 +149,6 @@ public class ConfigFileStepTest extends CDNGTestBase {
     ConfigFileOutcome configFileOutcome = (ConfigFileOutcome) stepOutcomes[0].getOutcome();
     assertThat(configFileOutcome.getConfigFileType()).isEqualTo(ConfigFileType.LOCAL_FILE);
     assertThat(configFileOutcome.getIdentifier()).isEqualTo(IDENTIFIER);
-    assertThat(configFileOutcome.getHostRelativeFilePath()).isEqualTo(HOST_DESTINATION_OVERRIDE);
 
     assertThat(configFileOutcome.getStore().getKind()).isEqualTo(StoreConfigType.HARNESS.getDisplayName());
     HarnessStore store = (HarnessStore) configFileOutcome.getStore();
@@ -174,11 +164,8 @@ public class ConfigFileStepTest extends CDNGTestBase {
     Ambiance ambiance = getAmbiance();
     Map<String, ResponseData> responseData = new HashMap<>();
     when(serviceStepsHelper.getChildrenOutcomes(responseData))
-        .thenReturn(Collections.singletonList(ConfigFileOutcome.builder()
-                                                  .identifier(IDENTIFIER)
-                                                  .hostRelativeFilePath(HOST_DESTINATION)
-                                                  .configFileType(ConfigFileType.LOCAL_FILE)
-                                                  .build()));
+        .thenReturn(Collections.singletonList(
+            ConfigFileOutcome.builder().identifier(IDENTIFIER).configFileType(ConfigFileType.LOCAL_FILE).build()));
     when(executionSweepingOutputService.listOutputsWithGivenNameAndSetupIds(
              any(), eq(FAILED_CHILDREN_OUTPUT), anyList()))
         .thenReturn(Collections.emptyList());
@@ -204,7 +191,6 @@ public class ConfigFileStepTest extends CDNGTestBase {
     ConfigFileOutcome configFileOutcome = (ConfigFileOutcome) stepOutcomes[0].getOutcome();
     assertThat(configFileOutcome.getConfigFileType()).isEqualTo(ConfigFileType.LOCAL_FILE);
     assertThat(configFileOutcome.getIdentifier()).isEqualTo(IDENTIFIER);
-    assertThat(configFileOutcome.getHostRelativeFilePath()).isEqualTo(HOST_DESTINATION);
 
     assertThat(configFileOutcome.getStore().getKind()).isEqualTo(StoreConfigType.GIT.getDisplayName());
     GitStore store = (GitStore) configFileOutcome.getStore();
@@ -232,7 +218,6 @@ public class ConfigFileStepTest extends CDNGTestBase {
 
   private ConfigFileAttributes getConfigFileAttributesWithHarnessStore() {
     return ConfigFileAttributes.builder()
-        .hostRelativeFilePath(ParameterField.createValueField(HOST_DESTINATION))
         .type(ConfigFileType.LOCAL_FILE)
         .store(ParameterField.createValueField(
             StoreConfigWrapper.builder()
@@ -248,7 +233,6 @@ public class ConfigFileStepTest extends CDNGTestBase {
 
   private ConfigFileAttributes getConfigFileAttributesOverride() {
     return ConfigFileAttributes.builder()
-        .hostRelativeFilePath(ParameterField.createValueField(HOST_DESTINATION_OVERRIDE))
         .type(ConfigFileType.LOCAL_FILE)
         .store(ParameterField.createValueField(
             StoreConfigWrapper.builder()
@@ -264,7 +248,6 @@ public class ConfigFileStepTest extends CDNGTestBase {
 
   private ConfigFileAttributes getConfigFileAttributesWithGitStore() {
     return ConfigFileAttributes.builder()
-        .hostRelativeFilePath(ParameterField.createValueField(HOST_DESTINATION))
         .type(ConfigFileType.LOCAL_FILE)
         .store(
             ParameterField.createValueField(StoreConfigWrapper.builder()
