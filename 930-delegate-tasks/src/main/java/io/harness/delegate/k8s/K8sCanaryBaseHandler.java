@@ -10,6 +10,8 @@ package io.harness.delegate.k8s;
 import static io.harness.annotations.dev.HarnessTeam.CDP;
 import static io.harness.k8s.manifest.ManifestHelper.getWorkloadsForCanaryAndBG;
 import static io.harness.k8s.manifest.VersionUtils.markVersionedResources;
+import static io.harness.k8s.model.Release.Status.Failed;
+import static io.harness.k8s.model.Release.Status.InProgress;
 import static io.harness.logging.CommandExecutionStatus.FAILURE;
 import static io.harness.logging.LogLevel.ERROR;
 
@@ -61,7 +63,7 @@ public class K8sCanaryBaseHandler {
 
   public boolean prepareForCanary(K8sCanaryHandlerConfig canaryHandlerConfig,
       K8sDelegateTaskParams k8sDelegateTaskParams, Boolean skipVersioning, LogCallback logCallback,
-      boolean isErrorFrameworkEnabled) throws Exception {
+      boolean isErrorFrameworkEnabled, boolean isCleanUpPrevInProgressCanaryRelease) throws Exception {
     if (isNotTrue(skipVersioning)) {
       markVersionedResources(canaryHandlerConfig.getResources());
     }
@@ -97,6 +99,15 @@ public class K8sCanaryBaseHandler {
         }
       }
       return false;
+    }
+    if (isCleanUpPrevInProgressCanaryRelease) {
+      for (int releaseIndex = canaryHandlerConfig.getReleaseHistory().getReleases().size() - 1; releaseIndex >= 0;
+           releaseIndex--) {
+        Release release = canaryHandlerConfig.getReleaseHistory().getReleases().get(releaseIndex);
+        if (release.getStatus() == InProgress) {
+          canaryHandlerConfig.getReleaseHistory().getRelease(releaseIndex).setStatus(Failed);
+        }
+      }
     }
 
     Release currentRelease =
