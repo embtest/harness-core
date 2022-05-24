@@ -69,4 +69,5 @@ public class YAMLFieldNameConstants {
   public final String HARNESS_IMAGE_CONNECTOR_REF = "harnessImageConnectorRef";
 
   public final String CHILD_NODE_OF_SPEC = "childNodeOfSpec";
+  public final String GITOPS_ENABLED = "gitOpsEnabled";
 }
