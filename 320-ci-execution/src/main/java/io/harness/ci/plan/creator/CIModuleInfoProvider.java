@@ -206,8 +206,16 @@ public class CIModuleInfoProvider implements ExecutionSummaryModuleInfoProvider 
     if (codebaseSweepingOutput != null) {
       log.info("Codebase sweeping output {}", codebaseSweepingOutput);
 
-      if (isEmpty(branch) && codebaseSweepingOutput != null) {
+      if (isEmpty(branch)) {
         branch = codebaseSweepingOutput.getBranch();
+      }
+
+      if (isEmpty(prNumber)) {
+        prNumber = codebaseSweepingOutput.getPrNumber();
+      }
+
+      if (isEmpty(repoName) && isNotEmpty(codebaseSweepingOutput.getRepoUrl())) {
+        repoName = getGitRepo(codebaseSweepingOutput.getRepoUrl());
       }
     }
 
