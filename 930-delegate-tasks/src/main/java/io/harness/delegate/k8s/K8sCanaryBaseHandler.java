@@ -100,12 +100,13 @@ public class K8sCanaryBaseHandler {
       }
       return false;
     }
+
     if (isCleanUpPrevInProgressCanaryRelease) {
       for (int releaseIndex = canaryHandlerConfig.getReleaseHistory().getReleases().size() - 1; releaseIndex >= 0;
            releaseIndex--) {
         Release release = canaryHandlerConfig.getReleaseHistory().getReleases().get(releaseIndex);
         if (release.getStatus() == InProgress) {
-          canaryHandlerConfig.getReleaseHistory().getRelease(releaseIndex).setStatus(Failed);
+          canaryHandlerConfig.getReleaseHistory().getReleases().get(releaseIndex).setStatus(Failed);
         }
       }
     }
