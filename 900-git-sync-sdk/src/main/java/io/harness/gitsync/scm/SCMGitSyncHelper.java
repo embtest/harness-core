@@ -12,6 +12,7 @@ import static io.harness.data.structure.EmptyPredicate.isNotEmpty;
 import static io.harness.data.structure.HarnessStringUtils.emptyIfNull;
 import static io.harness.gitsync.interceptor.GitSyncConstants.DEFAULT;
 
+import io.harness.ScopeIdentifiers;
 import io.harness.annotations.dev.OwnedBy;
 import io.harness.beans.Scope;
 import io.harness.eraro.ErrorCode;
@@ -33,10 +34,8 @@ import io.harness.gitsync.HarnessToGitPushInfoServiceGrpc.HarnessToGitPushInfoSe
 import io.harness.gitsync.PushFileResponse;
 import io.harness.gitsync.UpdateFileRequest;
 import io.harness.gitsync.UpdateFileResponse;
-import io.harness.gitsync.common.helper.ChangeTypeMapper;
-import io.harness.gitsync.common.helper.GitSyncGrpcClientUtils;
-import io.harness.gitsync.common.helper.ScopeIdentifierMapper;
-import io.harness.gitsync.common.helper.UserPrincipalMapper;
+import io.harness.gitsync.common.beans.GitOperation;
+import io.harness.gitsync.common.helper.*;
 import io.harness.gitsync.exceptions.GitSyncException;
 import io.harness.gitsync.interceptor.GitEntityInfo;
 import io.harness.gitsync.persistance.GitSyncSdkService;
@@ -52,6 +51,8 @@ import io.harness.gitsync.scm.beans.ScmUpdateFileGitRequest;
 import io.harness.gitsync.scm.beans.ScmUpdateFileGitResponse;
 import io.harness.gitsync.scm.errorhandling.ScmErrorHandler;
 import io.harness.impl.ScmResponseStatusUtils;
+import io.harness.logging.MdcContextSetter;
+import io.harness.manage.GlobalContextManager;
 import io.harness.ng.core.EntityDetail;
 import io.harness.ng.core.entitydetail.EntityDetailRestToProtoMapper;
 import io.harness.security.Principal;
@@ -97,93 +98,109 @@ public class SCMGitSyncHelper {
 
   public ScmGetFileResponse getFileByBranch(Scope scope, String repoName, String branchName, String filePath,
       String connectorRef, Map<String, String> contextMap) {
-    final GetFileRequest getFileRequest =
-        GetFileRequest.newBuilder()
-            .setRepoName(repoName)
-            .setConnectorRef(connectorRef)
-            .setBranchName(Strings.nullToEmpty(branchName))
-            .setFilePath(filePath)
-            .putAllContextMap(contextMap)
-            .setScopeIdentifiers(ScopeIdentifierMapper.getScopeIdentifiersFromScope(scope))
-            .setPrincipal(getPrincipal())
-            .build();
-    final GetFileResponse getFileResponse = GitSyncGrpcClientUtils.retryAndProcessException(
-        harnessToGitPushInfoServiceBlockingStub::getFile, getFileRequest);
+    ScopeIdentifiers scopeIdentifiers = ScopeIdentifierMapper.getScopeIdentifiersFromScope(scope);
+    contextMap = GitSyncLogContextHelper.setContext(
+        scopeIdentifiers, repoName, branchName, filePath, GitOperation.GET_FILE, contextMap);
+    try (GlobalContextManager.GlobalContextGuard guard = GlobalContextManager.ensureGlobalContextGuard();
+         MdcContextSetter ignore1 = new MdcContextSetter(contextMap)) {
+      final GetFileRequest getFileRequest =
+          GetFileRequest.newBuilder()
+              .setRepoName(repoName)
+              .setConnectorRef(connectorRef)
+              .setBranchName(Strings.nullToEmpty(branchName))
+              .setFilePath(filePath)
+              .putAllContextMap(contextMap)
+              .setScopeIdentifiers(ScopeIdentifierMapper.getScopeIdentifiersFromScope(scope))
+              .setPrincipal(getPrincipal())
+              .build();
+      final GetFileResponse getFileResponse = GitSyncGrpcClientUtils.retryAndProcessException(
+          harnessToGitPushInfoServiceBlockingStub::getFile, getFileRequest);
 
-    if (isFailureResponse(getFileResponse.getStatusCode())) {
-      log.error("Git SDK getFile Failure: {}", getFileResponse);
-      scmErrorHandler.processAndThrowException(
-          getFileResponse.getStatusCode(), getScmErrorDetailsFromGitProtoResponse(getFileResponse.getError()));
+      if (isFailureResponse(getFileResponse.getStatusCode())) {
+        log.error("Git SDK getFile Failure: {}", getFileResponse);
+        scmErrorHandler.processAndThrowException(
+            getFileResponse.getStatusCode(), getScmErrorDetailsFromGitProtoResponse(getFileResponse.getError()));
+      }
+
+      return ScmGetFileResponse.builder()
+          .fileContent(getFileResponse.getFileContent())
+          .gitMetaData(getScmGitMetaDataFromGitProtoResponse(getFileResponse.getGitMetaData()))
+          .build();
     }
-
-    return ScmGetFileResponse.builder()
-        .fileContent(getFileResponse.getFileContent())
-        .gitMetaData(getScmGitMetaDataFromGitProtoResponse(getFileResponse.getGitMetaData()))
-        .build();
   }
 
   public ScmCreateFileGitResponse createFile(
       Scope scope, ScmCreateFileGitRequest gitRequest, Map<String, String> contextMap) {
-    final CreateFileRequest createFileRequest =
-        CreateFileRequest.newBuilder()
-            .setRepoName(gitRequest.getRepoName())
-            .setFilePath(gitRequest.getFilePath())
-            .setBranchName(gitRequest.getBranchName())
-            .setConnectorRef(gitRequest.getConnectorRef())
-            .setFileContent(gitRequest.getFileContent())
-            .setIsCommitToNewBranch(gitRequest.isCommitToNewBranch())
-            .setCommitMessage(gitRequest.getCommitMessage())
-            .setScopeIdentifiers(ScopeIdentifierMapper.getScopeIdentifiersFromScope(scope))
-            .putAllContextMap(contextMap)
-            .setBaseBranchName(gitRequest.getBaseBranch())
-            .setPrincipal(getPrincipal())
-            .build();
+    ScopeIdentifiers scopeIdentifiers = ScopeIdentifierMapper.getScopeIdentifiersFromScope(scope);
+    contextMap = GitSyncLogContextHelper.setContext(scopeIdentifiers, gitRequest.getRepoName(),
+        gitRequest.getBranchName(), gitRequest.getFilePath(), GitOperation.GET_FILE, contextMap);
+    try (GlobalContextManager.GlobalContextGuard guard = GlobalContextManager.ensureGlobalContextGuard();
+         MdcContextSetter ignore1 = new MdcContextSetter(contextMap)) {
+      final CreateFileRequest createFileRequest = CreateFileRequest.newBuilder()
+                                                      .setRepoName(gitRequest.getRepoName())
+                                                      .setFilePath(gitRequest.getFilePath())
+                                                      .setBranchName(gitRequest.getBranchName())
+                                                      .setConnectorRef(gitRequest.getConnectorRef())
+                                                      .setFileContent(gitRequest.getFileContent())
+                                                      .setIsCommitToNewBranch(gitRequest.isCommitToNewBranch())
+                                                      .setCommitMessage(gitRequest.getCommitMessage())
+                                                      .setScopeIdentifiers(scopeIdentifiers)
+                                                      .putAllContextMap(contextMap)
+                                                      .setBaseBranchName(gitRequest.getBaseBranch())
+                                                      .setPrincipal(getPrincipal())
+                                                      .build();
 
-    final CreateFileResponse createFileResponse = GitSyncGrpcClientUtils.retryAndProcessException(
-        harnessToGitPushInfoServiceBlockingStub::createFile, createFileRequest);
+      final CreateFileResponse createFileResponse = GitSyncGrpcClientUtils.retryAndProcessException(
+          harnessToGitPushInfoServiceBlockingStub::createFile, createFileRequest);
 
-    if (isFailureResponse(createFileResponse.getStatusCode())) {
-      log.error("Git SDK createFile Failure: {}", createFileResponse);
-      scmErrorHandler.processAndThrowException(
-          createFileResponse.getStatusCode(), getScmErrorDetailsFromGitProtoResponse(createFileResponse.getError()));
+      if (isFailureResponse(createFileResponse.getStatusCode())) {
+        log.error("Git SDK createFile Failure: {}", createFileResponse);
+        scmErrorHandler.processAndThrowException(
+            createFileResponse.getStatusCode(), getScmErrorDetailsFromGitProtoResponse(createFileResponse.getError()));
+      }
+
+      return ScmCreateFileGitResponse.builder()
+          .gitMetaData(getScmGitMetaDataFromGitProtoResponse(createFileResponse.getGitMetaData()))
+          .build();
     }
-
-    return ScmCreateFileGitResponse.builder()
-        .gitMetaData(getScmGitMetaDataFromGitProtoResponse(createFileResponse.getGitMetaData()))
-        .build();
   }
 
   public ScmUpdateFileGitResponse updateFile(
       Scope scope, ScmUpdateFileGitRequest gitRequest, Map<String, String> contextMap) {
-    final UpdateFileRequest updateFileRequest =
-        UpdateFileRequest.newBuilder()
-            .setRepoName(gitRequest.getRepoName())
-            .setFilePath(gitRequest.getFilePath())
-            .setBranchName(gitRequest.getBranchName())
-            .setConnectorRef(gitRequest.getConnectorRef())
-            .setFileContent(gitRequest.getFileContent())
-            .setIsCommitToNewBranch(gitRequest.isCommitToNewBranch())
-            .setCommitMessage(gitRequest.getCommitMessage())
-            .setScopeIdentifiers(ScopeIdentifierMapper.getScopeIdentifiersFromScope(scope))
-            .putAllContextMap(contextMap)
-            .setBaseBranchName(gitRequest.getBaseBranch())
-            .setOldCommitId(emptyIfNull(gitRequest.getOldCommitId()))
-            .setOldFileSha(gitRequest.getOldFileSha())
-            .setPrincipal(getPrincipal())
-            .build();
+    ScopeIdentifiers scopeIdentifiers = ScopeIdentifierMapper.getScopeIdentifiersFromScope(scope);
+    contextMap = GitSyncLogContextHelper.setContext(scopeIdentifiers, gitRequest.getRepoName(),
+        gitRequest.getBranchName(), gitRequest.getFilePath(), GitOperation.UPDATE_FILE, contextMap);
+    try (GlobalContextManager.GlobalContextGuard guard = GlobalContextManager.ensureGlobalContextGuard();
+         MdcContextSetter ignore1 = new MdcContextSetter(contextMap)) {
+      final UpdateFileRequest updateFileRequest = UpdateFileRequest.newBuilder()
+                                                      .setRepoName(gitRequest.getRepoName())
+                                                      .setFilePath(gitRequest.getFilePath())
+                                                      .setBranchName(gitRequest.getBranchName())
+                                                      .setConnectorRef(gitRequest.getConnectorRef())
+                                                      .setFileContent(gitRequest.getFileContent())
+                                                      .setIsCommitToNewBranch(gitRequest.isCommitToNewBranch())
+                                                      .setCommitMessage(gitRequest.getCommitMessage())
+                                                      .setScopeIdentifiers(scopeIdentifiers)
+                                                      .putAllContextMap(contextMap)
+                                                      .setBaseBranchName(gitRequest.getBaseBranch())
+                                                      .setOldCommitId(emptyIfNull(gitRequest.getOldCommitId()))
+                                                      .setOldFileSha(gitRequest.getOldFileSha())
+                                                      .setPrincipal(getPrincipal())
+                                                      .build();
 
-    final UpdateFileResponse updateFileResponse = GitSyncGrpcClientUtils.retryAndProcessException(
-        harnessToGitPushInfoServiceBlockingStub::updateFile, updateFileRequest);
+      final UpdateFileResponse updateFileResponse = GitSyncGrpcClientUtils.retryAndProcessException(
+          harnessToGitPushInfoServiceBlockingStub::updateFile, updateFileRequest);
 
-    if (isFailureResponse(updateFileResponse.getStatusCode())) {
-      log.error("Git SDK updateFile Failure: {}", updateFileResponse);
-      scmErrorHandler.processAndThrowException(
-          updateFileResponse.getStatusCode(), getScmErrorDetailsFromGitProtoResponse(updateFileResponse.getError()));
+      if (isFailureResponse(updateFileResponse.getStatusCode())) {
+        log.error("Git SDK updateFile Failure: {}", updateFileResponse);
+        scmErrorHandler.processAndThrowException(
+            updateFileResponse.getStatusCode(), getScmErrorDetailsFromGitProtoResponse(updateFileResponse.getError()));
+      }
+
+      return ScmUpdateFileGitResponse.builder()
+          .gitMetaData(getScmGitMetaDataFromGitProtoResponse(updateFileResponse.getGitMetaData()))
+          .build();
     }
-
-    return ScmUpdateFileGitResponse.builder()
-        .gitMetaData(getScmGitMetaDataFromGitProtoResponse(updateFileResponse.getGitMetaData()))
-        .build();
   }
 
   public ScmCreatePRResponse createPullRequest(Scope scope, String repoName, String connectorRef, String sourceBranch,
