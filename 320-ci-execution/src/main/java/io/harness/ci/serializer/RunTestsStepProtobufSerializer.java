@@ -109,16 +109,20 @@ public class RunTestsStepProtobufSerializer implements ProtobufStepSerializer<Ru
       runTestsStepBuilder.setPackages(packages);
     }
 
-    String buildEnvironment = RunTimeInputHandler.resolveStringParameter(
-        "BuildEnvironment", "RunTests", identifier, runTestsStepInfo.getBuildEnvironment(), false);
-    if (StringUtils.isNotEmpty(buildEnvironment)) {
-      runTestsStepBuilder.setBuildEnvironment(buildEnvironment);
+    String namespaces = RunTimeInputHandler.resolveStringParameter(
+        "Namespaces", "RunTests", identifier, runTestsStepInfo.getNamespaces(), false);
+    if (StringUtils.isNotEmpty(namespaces)) {
+      runTestsStepBuilder.setNamespaces(namespaces);
     }
 
-    String frameworkVersion = RunTimeInputHandler.resolveStringParameter(
-        "FrameworkVersion", "RunTests", identifier, runTestsStepInfo.getBuildEnvironment(), false);
-    if (StringUtils.isNotEmpty(packages)) {
-      runTestsStepBuilder.setFrameworkVersion(frameworkVersion);
+    String buildEnvName = RunTimeInputHandler.resolveDotNetBuildEnvName(runTestsStepInfo.getBuildEnvironment());
+    if (StringUtils.isNotEmpty(buildEnvName)) {
+      runTestsStepBuilder.setBuildEnvironment(buildEnvName.toLowerCase());
+    }
+
+    String frameworkVersion = RunTimeInputHandler.resolveDotNetVersion(runTestsStepInfo.getFrameworkVersion());
+    if (StringUtils.isNotEmpty(frameworkVersion)) {
+      runTestsStepBuilder.setFrameworkVersion(buildEnvName.toLowerCase());
     }
 
     UnitTestReport reports = runTestsStepInfo.getReports().getValue();

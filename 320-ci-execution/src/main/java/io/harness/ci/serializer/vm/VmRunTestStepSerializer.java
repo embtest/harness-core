@@ -73,10 +73,10 @@ public class VmRunTestStepSerializer {
         "TestAnnotations", stepName, identifier, runTestsStepInfo.getTestAnnotations(), false);
     String packages = RunTimeInputHandler.resolveStringParameter(
         "Packages", stepName, identifier, runTestsStepInfo.getPackages(), false);
-    String buildEnvironment = RunTimeInputHandler.resolveStringParameter(
-        "BuildEnvironment", stepName, identifier, runTestsStepInfo.getBuildEnvironment(), false);
-    String frameworkVersion = RunTimeInputHandler.resolveStringParameter(
-        "FrameworkVersion", stepName, identifier, runTestsStepInfo.getFrameworkVersion(), false);
+    String namespaces = RunTimeInputHandler.resolveStringParameter(
+        "Namespaces", stepName, identifier, runTestsStepInfo.getNamespaces(), false);
+    String buildEnvironment = RunTimeInputHandler.resolveDotNetBuildEnvName(runTestsStepInfo.getBuildEnvironment());
+    String frameworkVersion = RunTimeInputHandler.resolveDotNetVersion(runTestsStepInfo.getFrameworkVersion());
 
     boolean runOnlySelectedTests = resolveBooleanParameter(runTestsStepInfo.getRunOnlySelectedTests(), true);
 
@@ -97,6 +97,7 @@ public class VmRunTestStepSerializer {
             .language(language)
             .buildTool(buildTool)
             .packages(packages)
+            .namespaces(namespaces)
             .testAnnotations(testAnnotations)
             .runOnlySelectedTests(runOnlySelectedTests)
             .preCommand(preCommand)

@@ -905,7 +905,20 @@
               "type": "string"
             },
             "buildEnvironment": {
-              "type": "string"
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "Core",
+                    "Framework"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "pattern": "^<\\+input>(\\.(allowedValues|regex)\\(.+?\\))*$",
+                  "minLength": 1
+                }
+              ]
             },
             "buildTool": {
               "oneOf": [
@@ -943,7 +956,20 @@
               ]
             },
             "frameworkVersion": {
-              "type": "string"
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "5.0",
+                    "6.0"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "pattern": "^<\\+input>(\\.(allowedValues|regex)\\(.+?\\))*$",
+                  "minLength": 1
+                }
+              ]
             },
             "image": {
               "type": "string"
@@ -980,6 +1006,9 @@
                   "minLength": 1
                 }
               ]
+            },
+            "namespaces": {
+              "type": "string"
             },
             "outputVariables": {
               "oneOf": [

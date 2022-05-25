@@ -57,6 +57,7 @@ message RunTestsStep {
   map<string, string> environment = 14;
   string buildEnvironment = 15;
   string frameworkVersion = 16;
+  string namespaces = 17;
 }
 
 message RunStep {

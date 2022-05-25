@@ -31,6 +31,7 @@ public class VmRunTestStep implements VmStepInfo {
   private String language;
   private String buildTool;
   private String packages;
+  private String namespaces;
   private String testAnnotations;
   private boolean runOnlySelectedTests;
   @Expression(ALLOW_SECRETS) private String preCommand;
