@@ -93,7 +93,7 @@ public class SimpleEncryption implements EncryptionInterface {
   @Override
   public byte[] encrypt(byte[] content) {
     try {
-      Cipher c = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+      Cipher c = Cipher.getInstance("AES/GCM/NoPadding");
       c.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(IV));
       byte[] encrypted = c.doFinal(content);
       byte[] combined = new byte[salt.length + encrypted.length];
