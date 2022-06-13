@@ -22,6 +22,7 @@ sources:
     - 'library'
     - '.git'
     - 'main_maven_install'
+    - 'target'
     
 # Specify the languages you would like to Scan. Default is all Detected
 #languages: 'JAVA,CPP'
